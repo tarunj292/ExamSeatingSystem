@@ -271,5 +271,137 @@ namespace ExamSeatingSystem
                 }
             }
         }
+
+        private void insertCSVtoDB_Click(object sender, EventArgs e)
+        {
+            InsertProgrammeSemCourseData(@"C:\Users\Pulin\Desktop\Project\New Text Document.csv");
+        }
+
+
+
+
+
+        private void InsertProgrammeSemCourseData(string csvFilePath)
+        {
+            try
+            {
+                using (TextFieldParser csvReader = new TextFieldParser(csvFilePath))
+                {
+                    csvReader.SetDelimiters(new string[] { "," });
+                    csvReader.HasFieldsEnclosedInQuotes = true;
+
+                    // Skip header line if it exists
+                    if (!csvReader.EndOfData)
+                    {
+                        csvReader.ReadLine(); // Skip header line
+                    }
+
+                    using (SqlConnection dbConnection = new SqlConnection(@"Data Source=Short-Feet\SQLEXPRESS; Initial Catalog=ExamCell; Integrated Security=SSPI;"))
+                    {
+                        dbConnection.Open();
+
+                        while (!csvReader.EndOfData)
+                        {
+                            string[] fields = csvReader.ReadFields();
+
+                            // Check if all fields exist
+                            if (fields.Length < 3)
+                            {
+                                continue; // Skip line if not enough fields
+                            }
+
+                            string programmeName = fields[0];
+                            int semesterNumber;
+                            if (!int.TryParse(fields[1], out semesterNumber))
+                            {
+                                continue; // Skip line if semester number is invalid
+                            }
+                            string courseName = fields[2];
+
+                            // Check if Programme already exists
+                            string checkProgrammeQuery = "SELECT COUNT(*) FROM Program WHERE program_name = @ProgrammeName";
+                            using (SqlCommand checkProgrammeCommand = new SqlCommand(checkProgrammeQuery, dbConnection))
+                            {
+                                checkProgrammeCommand.Parameters.AddWithValue("@ProgrammeName", programmeName);
+                                int programmeCount = (int)checkProgrammeCommand.ExecuteScalar();
+                                if (programmeCount == 0)
+                                {
+                                    // Insert Programme
+                                    string insertProgrammeQuery = "INSERT INTO Program (program_name) VALUES (@ProgrammeName)";
+                                    using (SqlCommand insertProgrammeCommand = new SqlCommand(insertProgrammeQuery, dbConnection))
+                                    {
+                                        insertProgrammeCommand.Parameters.AddWithValue("@ProgrammeName", programmeName);
+                                        insertProgrammeCommand.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+
+                            // Check if Semester already exists
+                            string checkSemesterQuery = "SELECT COUNT(*) FROM Semester WHERE semester_number = @SemesterNumber";
+                            using (SqlCommand checkSemesterCommand = new SqlCommand(checkSemesterQuery, dbConnection))
+                            {
+                                checkSemesterCommand.Parameters.AddWithValue("@SemesterNumber", semesterNumber);
+                                int semesterCount = (int)checkSemesterCommand.ExecuteScalar();
+                                if (semesterCount == 0)
+                                {
+                                    // Insert Semester
+                                    string insertSemesterQuery = "INSERT INTO Semester (semester_number) VALUES (@SemesterNumber)";
+                                    using (SqlCommand insertSemesterCommand = new SqlCommand(insertSemesterQuery, dbConnection))
+                                    {
+                                        insertSemesterCommand.Parameters.AddWithValue("@SemesterNumber", semesterNumber);
+                                        insertSemesterCommand.ExecuteNonQuery();
+                                    }
+
+                                }
+                            }
+
+                            // Check if Course already exists
+                            string checkCourseQuery = "SELECT COUNT(*) FROM Course WHERE course_name = @CourseName";
+                            using (SqlCommand checkCourseCommand = new SqlCommand(checkCourseQuery, dbConnection))
+                            {
+                                checkCourseCommand.Parameters.AddWithValue("@CourseName", courseName);
+                                int courseCount = (int)checkCourseCommand.ExecuteScalar();
+                                if (courseCount == 0)
+                                {
+                                    // Insert Course
+                                    string insertCourseQuery = "INSERT INTO Course (course_name) VALUES (@CourseName)";
+                                    using (SqlCommand insertCourseCommand = new SqlCommand(insertCourseQuery, dbConnection))
+                                    {
+                                        insertCourseCommand.Parameters.AddWithValue("@CourseName", courseName);
+                                        insertCourseCommand.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+
+                            // Check if ProgrammeHasCourses already exists
+                            string checkProgrammeHasCoursesQuery = "SELECT COUNT(*) FROM ProgramHasCourse WHERE program_name = @ProgrammeName AND semester_number = @SemesterNumber AND course_name = @CourseName";
+                            using (SqlCommand checkProgrammeHasCoursesCommand = new SqlCommand(checkProgrammeHasCoursesQuery, dbConnection))
+                            {
+                                checkProgrammeHasCoursesCommand.Parameters.AddWithValue("@ProgrammeName", programmeName);
+                                checkProgrammeHasCoursesCommand.Parameters.AddWithValue("@SemesterNumber", semesterNumber);
+                                checkProgrammeHasCoursesCommand.Parameters.AddWithValue("@CourseName", courseName);
+                                int programmeHasCoursesCount = (int)checkProgrammeHasCoursesCommand.ExecuteScalar();
+                                if (programmeHasCoursesCount == 0)
+                                {
+                                    // Insert ProgrammeHasCourses
+                                    string insertProgrammeHasCoursesQuery = "INSERT INTO ProgramHasCourse (program_name, semester_number, course_name) VALUES (@ProgrammeName, @SemesterNumber, @CourseName)";
+                                    using (SqlCommand insertProgrammeHasCoursesCommand = new SqlCommand(insertProgrammeHasCoursesQuery, dbConnection))
+                                    {
+                                        insertProgrammeHasCoursesCommand.Parameters.AddWithValue("@ProgrammeName", programmeName);
+                                        insertProgrammeHasCoursesCommand.Parameters.AddWithValue("@SemesterNumber", semesterNumber);
+                                        insertProgrammeHasCoursesCommand.Parameters.AddWithValue("@CourseName", courseName);
+                                        insertProgrammeHasCoursesCommand.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error inserting data from CSV into SQL Server: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
