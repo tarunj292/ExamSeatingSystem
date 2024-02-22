@@ -134,6 +134,7 @@ namespace ExamSeatingSystem
             string programFilter = L[0];
             string courseFilter = L[2];
             string semesterFilter = L[1];
+            MessageBox.Show($"{programFilter} {courseFilter} {semesterFilter}");
             string query = "SELECT phc.semester_number AS Sem, phc.program_name AS Program, phc.course_name AS Course, MIN(s.roll_number) AS FromSeat, MAX(s.roll_number) AS ToSeat, COUNT(s.roll_number) AS TotalStudents, SUM(CASE WHEN s.isAssigned = 0 THEN 1 ELSE 0 END) AS UnAssigned FROM ProgramHasCourse AS phc INNER JOIN StudentEnrollsProgramInYear AS sep ON phc.ProgCour_ID = sep.ProgCour_ID INNER JOIN Student AS s ON sep.roll_number = s.roll_number WHERE phc.program_name = @Program AND phc.semester_number = @Semester AND phc.course_name = @Course GROUP BY phc.program_name, phc.course_name, phc.semester_number;";
             using (SqlCommand cmd = new SqlCommand(query, con))
             {
