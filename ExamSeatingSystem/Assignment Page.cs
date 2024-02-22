@@ -47,7 +47,16 @@ namespace ExamSeatingSystem
                     return;
                 }
             }
-
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string deleteQuery = "DELETE from classroom where room_number = @RoomNumber";
+                using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, con))
+                {
+                    deleteCmd.Parameters.AddWithValue("@RoomNumber", roomNumber);
+                    deleteCmd.ExecuteNonQuery();
+                }
+            }
             if (!checkBox1.Checked)
             {
                 InitializeClassroomSeats(roomNumber, capacity, "A");
@@ -110,16 +119,21 @@ namespace ExamSeatingSystem
                 }
             }
         }
-        HashSet<HashSet<string>> PSCHashSet = new HashSet<HashSet<string>>();
+        Dictionary<string ,HashSet<string>> PSCHashSet = new Dictionary<string, HashSet<string>>();
         private void GetStudentCount_Click(object sender, EventArgs e)
         {
             HashSet<string> hs = new HashSet<string>();
             hs.Add(programFilter.Text);
             hs.Add(semesterFilter.Text);
             hs.Add(courseFilter.Text);
-            if (!PSCHashSet.Contains(hs))
+            string k = programFilter.Text + semesterFilter.Text + courseFilter.Text;
+            if (!PSCHashSet.ContainsKey(k))
             {
-                PSCHashSet.Add(hs);
+                PSCHashSet.Add(k, hs);
+            }
+            else
+            {
+                MessageBox.Show("Entered value already exists");
             }
             CountStudentsByDetails();
         }
@@ -128,8 +142,10 @@ namespace ExamSeatingSystem
         {
             DataTable combinedDataTable = new DataTable();
             HashSet<List<string>> PSCList = new HashSet<List<string>>();
-            foreach (HashSet<string> hs in PSCHashSet)
+            foreach (KeyValuePair<string, HashSet<string>> entry in PSCHashSet)
             {
+                string key = entry.Key;
+                HashSet<string> hs = entry.Value;
                 PSCList.Add(hs.ToList());
             }
             foreach (List<string> L in PSCList)
@@ -494,13 +510,15 @@ namespace ExamSeatingSystem
 
         private void button12_Click(object sender, EventArgs e)
         {
-            foreach (HashSet<string> set in PSCHashSet)
+            foreach (KeyValuePair<string, HashSet<string>> set in PSCHashSet)
             {
+                HashSet<string> hs = set.Value;
+
                 // Check if the set has at least three elements
-                if (set.Count >= 3)
+                if (hs.Count >= 3)
                 {
-                    // Access the elements using a loop or convert to a list and access by index
-                    List<string> list = set.ToList();
+                    // Convert the set to a list and access the first three elements
+                    List<string> list = hs.ToList();
                     MessageBox.Show(list[0] + list[1] + list[2]);
                 }
                 else
@@ -509,6 +527,7 @@ namespace ExamSeatingSystem
                     MessageBox.Show("Set does not contain enough elements.");
                 }
             }
+
 
         }
     }
