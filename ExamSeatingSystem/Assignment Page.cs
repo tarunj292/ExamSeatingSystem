@@ -444,6 +444,12 @@ namespace ExamSeatingSystem
                 using (SqlCommand updateCommand = new SqlCommand(updateBenchQuery, con))
                 {
                     updateCommand.ExecuteNonQuery();
+                } 
+
+                string deleteSSICQuery = "delete from StudentSeatInClassroom;";
+                using (SqlCommand deleteCommand = new SqlCommand(deleteSSICQuery, con))
+                {
+                    deleteCommand.ExecuteNonQuery();
                 }
 
                 string deleteClassroomQuery = "delete from classroom;";
@@ -452,11 +458,6 @@ namespace ExamSeatingSystem
                     deleteCommand.ExecuteNonQuery();
                 }
 
-                string deleteSSICQuery = "delete from StudentSeatInClassroom;";
-                using (SqlCommand deleteCommand = new SqlCommand(deleteSSICQuery, con))
-                {
-                    deleteCommand.ExecuteNonQuery();
-                }
             }
             MessageBox.Show("Success");
         }
