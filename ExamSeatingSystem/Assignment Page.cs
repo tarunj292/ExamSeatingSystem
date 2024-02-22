@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Microsoft.VisualBasic.Devices;
 using Microsoft.VisualBasic.FileIO;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
@@ -90,6 +91,7 @@ namespace ExamSeatingSystem
 
         private void AssignmentPage_Load(object sender, EventArgs e)
         {
+            CountStudentsByDetails();
             GetClassroomData();
         }
 
@@ -108,62 +110,67 @@ namespace ExamSeatingSystem
                 }
             }
         }
-        HashSet<List<string>> PSC = new HashSet<List<string>>();
+        HashSet<HashSet<string>> PSCHashSet = new HashSet<HashSet<string>>();
         private void GetStudentCount_Click(object sender, EventArgs e)
         {
-            List<string> list = new List<string>();
-            list.Add(programFilter.Text);
-            list.Add(semesterFilter.Text);
-            list.Add(courseFilter.Text);
-            PSC.Add(list);
-            combinedDataTable = new DataTable();
-            foreach (List<string> L in PSC)
+            HashSet<string> hs = new HashSet<string>();
+            hs.Add(programFilter.Text);
+            hs.Add(semesterFilter.Text);
+            hs.Add(courseFilter.Text);
+            if (!PSCHashSet.Contains(hs))
+            {
+                PSCHashSet.Add(hs);
+            }
+            CountStudentsByDetails();
+        }
+
+        private void CountStudentsByDetails()
+        {
+            DataTable combinedDataTable = new DataTable();
+            HashSet<List<string>> PSCList = new HashSet<List<string>>();
+            foreach (HashSet<string> hs in PSCHashSet)
+            {
+                PSCList.Add(hs.ToList());
+            }
+            foreach (List<string> L in PSCList)
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    CountStudentsByDetails(L, con);
-                }
-            }
-        }
-
-        // Define a DataTable at class level to hold combined results
-        private DataTable combinedDataTable = new DataTable();
-        private void CountStudentsByDetails(List<string> L, SqlConnection con)
-        {
-            string programFilter = L[0];
-            string courseFilter = L[2];
-            string semesterFilter = L[1];
-            MessageBox.Show($"{programFilter} {courseFilter} {semesterFilter}");
-            string query = "SELECT phc.semester_number AS Sem, phc.program_name AS Program, phc.course_name AS Course, MIN(s.roll_number) AS FromSeat, MAX(s.roll_number) AS ToSeat, COUNT(s.roll_number) AS TotalStudents, SUM(CASE WHEN s.isAssigned = 0 THEN 1 ELSE 0 END) AS UnAssigned FROM ProgramHasCourse AS phc INNER JOIN StudentEnrollsProgramInYear AS sep ON phc.ProgCour_ID = sep.ProgCour_ID INNER JOIN Student AS s ON sep.roll_number = s.roll_number WHERE phc.program_name = @Program AND phc.semester_number = @Semester AND phc.course_name = @Course GROUP BY phc.program_name, phc.course_name, phc.semester_number;";
-            using (SqlCommand cmd = new SqlCommand(query, con))
-            {
-                cmd.Parameters.AddWithValue("@Program", programFilter);
-                cmd.Parameters.AddWithValue("@Course", courseFilter);
-                cmd.Parameters.AddWithValue("@Semester", semesterFilter);
-                SqlDataAdapter ad = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                ad.Fill(dt);
-
-                // Add a new column for the serial number
-                DataColumn serialNumberColumn = new DataColumn("SerialNumber", typeof(int));
-                serialNumberColumn.AutoIncrement = true;
-                serialNumberColumn.AutoIncrementSeed = 1;
-                serialNumberColumn.AutoIncrementStep = 1;
-                dt.Columns.Add(serialNumberColumn);
-
-                // Rearrange columns if you want the serial number to be at a specific position
-                dt.Columns["SerialNumber"].SetOrdinal(0);
-
-                //Merge the new DataTable with the combinedDataTable
-                combinedDataTable.Merge(dt);
-                dataGridView1.DataSource = combinedDataTable; // Assign combinedDataTable to the DataGridView
-                int serialNumber = 1;
-                foreach (DataGridViewRow row in dataGridView1.Rows)
-                {
-                    if (!row.IsNewRow)
+                    string programFilter = L[0];
+                    string courseFilter = L[2];
+                    string semesterFilter = L[1];
+                    string query = "SELECT phc.semester_number AS Sem, phc.program_name AS Program, phc.course_name AS Course, MIN(s.roll_number) AS FromSeat, MAX(s.roll_number) AS ToSeat, COUNT(s.roll_number) AS TotalStudents, SUM(CASE WHEN s.isAssigned = 0 THEN 1 ELSE 0 END) AS UnAssigned FROM ProgramHasCourse AS phc INNER JOIN StudentEnrollsProgramInYear AS sep ON phc.ProgCour_ID = sep.ProgCour_ID INNER JOIN Student AS s ON sep.roll_number = s.roll_number WHERE phc.program_name = @Program AND phc.semester_number = @Semester AND phc.course_name = @Course GROUP BY phc.program_name, phc.course_name, phc.semester_number;";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        row.Cells["SerialNumber"].Value = serialNumber++;
+                        cmd.Parameters.AddWithValue("@Program", programFilter);
+                        cmd.Parameters.AddWithValue("@Course", courseFilter);
+                        cmd.Parameters.AddWithValue("@Semester", semesterFilter);
+                        SqlDataAdapter ad = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        ad.Fill(dt);
+
+                        // Add a new column for the serial number
+                        DataColumn serialNumberColumn = new DataColumn("SerialNumber", typeof(int));
+                        serialNumberColumn.AutoIncrement = true;
+                        serialNumberColumn.AutoIncrementSeed = 1;
+                        serialNumberColumn.AutoIncrementStep = 1;
+                        dt.Columns.Add(serialNumberColumn);
+
+                        // Rearrange columns if you want the serial number to be at a specific position
+                        dt.Columns["SerialNumber"].SetOrdinal(0);
+
+                        //Merge the new DataTable with the combinedDataTable
+                        combinedDataTable.Merge(dt);
+                        dataGridView1.DataSource = combinedDataTable; // Assign combinedDataTable to the DataGridView
+                        int serialNumber = 1;
+                        foreach (DataGridViewRow row in dataGridView1.Rows)
+                        {
+                            if (!row.IsNewRow)
+                            {
+                                row.Cells["SerialNumber"].Value = serialNumber++;
+                            }
+                        }
                     }
                 }
             }
@@ -172,6 +179,7 @@ namespace ExamSeatingSystem
         private void assign_Click(object sender, EventArgs e)
         {
             List<long> studentsList = null;
+            string roomNumber = textBox1.Text.ToString();
             // Iterate through each row in the DataGridView
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -180,17 +188,20 @@ namespace ExamSeatingSystem
                 {
                     if (row.Cells["SerialNumber"].Value.ToString() == textBox4.Text.ToString())
                     {
+                        string program = null;
+                        string course = null;
                         foreach (DataGridViewCell cell in row.Cells)
                         {
                             int semester = (int)row.Cells[1].Value;
-                            string program = (string)row.Cells[2].Value;
-                            string course = (string)row.Cells[3].Value;
+                            program = (string)row.Cells[2].Value;
+                            course = (string)row.Cells[3].Value;
                             studentsList = GetStudentsFromDB(program, semester, course);
                         }
+                        MessageBox.Show(roomNumber + " " + program + " " + course);
+                        GenerateBlock(roomNumber, program, course);
                     }
                 }
             }
-            string roomNumber = textBox1.Text.ToString();
             List<string> benchesList = GetBenchFromDB(roomNumber);
             Dictionary<string, long> studentOnBench = new Dictionary<string, long>();
             int loopIteration = studentsList.Count < benchesList.Count ? studentsList.Count : benchesList.Count;
@@ -212,7 +223,23 @@ namespace ExamSeatingSystem
             {
                 MessageBox.Show($"An error occurred: {ex.Message}");
             }
+            CountStudentsByDetails();
             GetClassroomData();
+        }
+
+        List<string> roomNumberList = new List<string>();
+        List<string> programNameList = new List<string>();
+        List<string> courseNameList = new List<string>();
+        private void GenerateBlock(string roomNumber, string program, string course)
+        {
+            roomNumberList.Add(roomNumber);
+            programNameList.Add(program);
+            courseNameList.Add(course);
+            int blockPart1 = roomNumberList.IndexOf(roomNumber) + 1;
+            int blockPart2 = programNameList.IndexOf(program) + 1;
+            int blockPart3 = courseNameList.IndexOf(course) + 65;
+            MessageBox.Show($"{blockPart1}{blockPart2}{(char)blockPart3}");
+            label11.Text = $"{blockPart1}{blockPart2}{(char)blockPart3}";
         }
 
         private List<long> GetStudentsFromDB(string program, int semester, string course)
@@ -460,7 +487,29 @@ namespace ExamSeatingSystem
                 }
 
             }
+            CountStudentsByDetails();
+            GetClassroomData();
             MessageBox.Show("Success");
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            foreach (HashSet<string> set in PSCHashSet)
+            {
+                // Check if the set has at least three elements
+                if (set.Count >= 3)
+                {
+                    // Access the elements using a loop or convert to a list and access by index
+                    List<string> list = set.ToList();
+                    MessageBox.Show(list[0] + list[1] + list[2]);
+                }
+                else
+                {
+                    // Handle cases where the set doesn't have enough elements
+                    MessageBox.Show("Set does not contain enough elements.");
+                }
+            }
+
         }
     }
 }

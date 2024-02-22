@@ -40,7 +40,6 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button3 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
@@ -59,6 +58,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.courseFilter = new System.Windows.Forms.TextBox();
+            this.button12 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -66,7 +66,7 @@
             // button5
             // 
             this.button5.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F);
-            this.button5.Location = new System.Drawing.Point(85, 642);
+            this.button5.Location = new System.Drawing.Point(22, 662);
             this.button5.Margin = new System.Windows.Forms.Padding(4);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(304, 28);
@@ -178,7 +178,7 @@
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(804, 630);
+            this.button3.Location = new System.Drawing.Point(877, 661);
             this.button3.Margin = new System.Windows.Forms.Padding(4);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(159, 28);
@@ -189,24 +189,13 @@
             // button1
             // 
             this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(601, 642);
+            this.button1.Location = new System.Drawing.Point(681, 662);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(145, 28);
             this.button1.TabIndex = 35;
             this.button1.Text = "Get Data by Details";
             this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(455, 687);
-            this.button2.Margin = new System.Windows.Forms.Padding(4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(304, 28);
-            this.button2.TabIndex = 53;
-            this.button2.Text = "Seating Arrangement Classroom";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // comboBox5
             // 
@@ -413,11 +402,24 @@
             this.courseFilter.Size = new System.Drawing.Size(160, 29);
             this.courseFilter.TabIndex = 65;
             // 
+            // button12
+            // 
+            this.button12.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button12.Location = new System.Drawing.Point(370, 662);
+            this.button12.Margin = new System.Windows.Forms.Padding(4);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(304, 28);
+            this.button12.TabIndex = 67;
+            this.button12.Text = "Seating Arrangement Classroom";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
             // AssignmentPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1371, 746);
+            this.Controls.Add(this.button12);
             this.Controls.Add(this.courseFilter);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button5);
@@ -432,7 +434,6 @@
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.comboBox5);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.textBox4);
@@ -474,7 +475,6 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ComboBox comboBox5;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox textBox4;
@@ -493,6 +493,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.TextBox courseFilter;
+        private System.Windows.Forms.Button button12;
     }
 }
 
