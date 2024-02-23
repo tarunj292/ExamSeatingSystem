@@ -119,7 +119,7 @@ namespace ExamSeatingSystem
                 }
             }
         }
-        Dictionary<string ,HashSet<string>> PSCHashSet = new Dictionary<string, HashSet<string>>();
+        Dictionary<string, HashSet<string>> PSCHashSet = new Dictionary<string, HashSet<string>>();
         private void GetStudentCount_Click(object sender, EventArgs e)
         {
             HashSet<string> hs = new HashSet<string>();
@@ -192,6 +192,8 @@ namespace ExamSeatingSystem
             }
         }
 
+        string programByRoomsBenchName;
+        string programBySeatNumber;
         private void assign_Click(object sender, EventArgs e)
         {
             List<long> studentsList = null;
@@ -213,7 +215,6 @@ namespace ExamSeatingSystem
                             course = (string)row.Cells[3].Value;
                             studentsList = GetStudentsFromDB(program, semester, course);
                         }
-                        MessageBox.Show(roomNumber + " " + program + " " + course);
                         GenerateBlock(roomNumber, program, course);
                     }
                 }
@@ -223,6 +224,15 @@ namespace ExamSeatingSystem
             int loopIteration = studentsList.Count < benchesList.Count ? studentsList.Count : benchesList.Count;
             for (int i = 0; i < loopIteration; i++)
             {
+                if (benchesList[i][0] == 'B')
+                {
+                    GetProgramBySeatNumber(studentsList[i]);
+                    GetProgramByRoomsBenchName(roomNumber, benchesList[i]);
+                    if (programByRoomsBenchName == programBySeatNumber)
+                    {
+                        studentsList.Remove(i);
+                    }
+                }
                 studentOnBench.Add(benchesList[i], studentsList[i]);
             }
 
@@ -243,6 +253,47 @@ namespace ExamSeatingSystem
             GetClassroomData();
         }
 
+        private void GetProgramByRoomsBenchName(string roomNumber, string blockNumber)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string selectQuery = "SELECT phc.program_name FROM StudentSeatInClassroom ssc JOIN StudentEnrollsProgramInYear sep ON ssc.roll_number = sep.roll_number JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID WHERE ssc.room_number = @RoomNumber AND ssc.block_number = @BlockNumber;";
+                using (SqlCommand cmd = new SqlCommand(selectQuery, con))
+                {
+                    cmd.Parameters.AddWithValue("@RoomNumber", roomNumber);
+                    cmd.Parameters.AddWithValue("@BlockNumber", blockNumber);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            programByRoomsBenchName = reader.GetString(0);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void GetProgramBySeatNumber(long seatNumber)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = "SELECT DISTINCT phc.program_name FROM StudentEnrollsProgramInYear sep JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID WHERE sep.roll_number = @SeatNumber;";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@SeatNumber", seatNumber);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            programBySeatNumber = reader.GetString(0);
+                        }
+                    }
+                }
+            }
+        }
+
         List<string> roomNumberList = new List<string>();
         List<string> programNameList = new List<string>();
         List<string> courseNameList = new List<string>();
@@ -254,7 +305,6 @@ namespace ExamSeatingSystem
             int blockPart1 = roomNumberList.IndexOf(roomNumber) + 1;
             int blockPart2 = programNameList.IndexOf(program) + 1;
             int blockPart3 = courseNameList.IndexOf(course) + 65;
-            MessageBox.Show($"{blockPart1}{blockPart2}{(char)blockPart3}");
             label11.Text = $"{blockPart1}{blockPart2}{(char)blockPart3}";
         }
 
@@ -488,7 +538,7 @@ namespace ExamSeatingSystem
                 using (SqlCommand updateCommand = new SqlCommand(updateBenchQuery, con))
                 {
                     updateCommand.ExecuteNonQuery();
-                } 
+                }
 
                 string deleteSSICQuery = "delete from StudentSeatInClassroom;";
                 using (SqlCommand deleteCommand = new SqlCommand(deleteSSICQuery, con))
