@@ -22,7 +22,7 @@ namespace ExamSeatingSystem
             InitializeComponent();
         }
 
-        private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=examcell;Integrated Security=True";
+        private readonly string connectionString = "Data Source=31D-LAB3-41\\MSSQLSERVER01;Initial Catalog=ExamCell;Integrated Security=True";
 
         private void AddClassRoom_Click(object sender, EventArgs e)
         {
@@ -100,8 +100,42 @@ namespace ExamSeatingSystem
 
         private void AssignmentPage_Load(object sender, EventArgs e)
         {
+            programFilter.DataSource = GetProgramNames();
+            programFilter.DisplayMember = "program_name";
+            programFilter.Text = null;
+
+
+            semesterFilter.Enabled = false;
+            semesterFilter.Text = null;
+            label3.ForeColor = Color.Gray;
+
+
+
+            courseFilter.Enabled = false;
+            courseFilter.Text = null;
+            label4.ForeColor = Color.Gray;
             CountStudentsByDetails();
             GetClassroomData();
+        }
+
+        private DataTable GetProgramNames()
+        {
+            string query = "SELECT distinct program_name FROM ProgramHasCourse";
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+
+            return dataTable;
         }
 
         private void GetClassroomData()
@@ -119,7 +153,7 @@ namespace ExamSeatingSystem
                 }
             }
         }
-        Dictionary<string ,HashSet<string>> PSCHashSet = new Dictionary<string, HashSet<string>>();
+        Dictionary<string, HashSet<string>> PSCHashSet = new Dictionary<string, HashSet<string>>();
         private void GetStudentCount_Click(object sender, EventArgs e)
         {
             HashSet<string> hs = new HashSet<string>();
@@ -192,6 +226,8 @@ namespace ExamSeatingSystem
             }
         }
 
+        string programByRoomsBenchName;
+        string programBySeatNumber;
         private void assign_Click(object sender, EventArgs e)
         {
             List<long> studentsList = null;
@@ -213,7 +249,6 @@ namespace ExamSeatingSystem
                             course = (string)row.Cells[3].Value;
                             studentsList = GetStudentsFromDB(program, semester, course);
                         }
-                        MessageBox.Show(roomNumber + " " + program + " " + course);
                         GenerateBlock(roomNumber, program, course);
                     }
                 }
@@ -223,6 +258,15 @@ namespace ExamSeatingSystem
             int loopIteration = studentsList.Count < benchesList.Count ? studentsList.Count : benchesList.Count;
             for (int i = 0; i < loopIteration; i++)
             {
+                if (benchesList[i][0] == 'B')
+                {
+                    GetProgramBySeatNumber(studentsList[i]);
+                    GetProgramByRoomsBenchName(roomNumber, benchesList[i]);
+                    if (programByRoomsBenchName == programBySeatNumber)
+                    {
+                        studentsList.Remove(i);
+                    }
+                }
                 studentOnBench.Add(benchesList[i], studentsList[i]);
             }
 
@@ -243,6 +287,47 @@ namespace ExamSeatingSystem
             GetClassroomData();
         }
 
+        private void GetProgramByRoomsBenchName(string roomNumber, string blockNumber)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string selectQuery = "SELECT phc.program_name FROM StudentSeatInClassroom ssc JOIN StudentEnrollsProgramInYear sep ON ssc.roll_number = sep.roll_number JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID WHERE ssc.room_number = @RoomNumber AND ssc.block_number = @BlockNumber;";
+                using (SqlCommand cmd = new SqlCommand(selectQuery, con))
+                {
+                    cmd.Parameters.AddWithValue("@RoomNumber", roomNumber);
+                    cmd.Parameters.AddWithValue("@BlockNumber", blockNumber);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            programByRoomsBenchName = reader.GetString(0);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void GetProgramBySeatNumber(long seatNumber)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = "SELECT DISTINCT phc.program_name FROM StudentEnrollsProgramInYear sep JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID WHERE sep.roll_number = @SeatNumber;";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@SeatNumber", seatNumber);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            programBySeatNumber = reader.GetString(0);
+                        }
+                    }
+                }
+            }
+        }
+
         List<string> roomNumberList = new List<string>();
         List<string> programNameList = new List<string>();
         List<string> courseNameList = new List<string>();
@@ -254,7 +339,6 @@ namespace ExamSeatingSystem
             int blockPart1 = roomNumberList.IndexOf(roomNumber) + 1;
             int blockPart2 = programNameList.IndexOf(program) + 1;
             int blockPart3 = courseNameList.IndexOf(course) + 65;
-            MessageBox.Show($"{blockPart1}{blockPart2}{(char)blockPart3}");
             label11.Text = $"{blockPart1}{blockPart2}{(char)blockPart3}";
         }
 
@@ -346,7 +430,7 @@ namespace ExamSeatingSystem
 
         private void insertCSVtoDB_Click(object sender, EventArgs e)
         {
-            InsertProgrammeSemCourseData(@"C:\Users\tarun\Downloads\New Text Document.csv");
+            InsertProgrammeSemCourseData(@"C:\Users\admin\Downloads\New Text Document.csv");
             MessageBox.Show("Successfully Inserted Data");
         }
 
@@ -488,7 +572,7 @@ namespace ExamSeatingSystem
                 using (SqlCommand updateCommand = new SqlCommand(updateBenchQuery, con))
                 {
                     updateCommand.ExecuteNonQuery();
-                } 
+                }
 
                 string deleteSSICQuery = "delete from StudentSeatInClassroom;";
                 using (SqlCommand deleteCommand = new SqlCommand(deleteSSICQuery, con))
@@ -529,6 +613,124 @@ namespace ExamSeatingSystem
             }
 
 
+        }
+
+        private void semesterFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (semesterFilter.SelectedItem != null)
+                {
+
+                    semesterFilter.Text = semesterFilter.Text.ToString();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error Sem: " + ex.Message);
+            }
+            finally
+            {
+
+                courseFilter.Enabled = true;
+                courseFilter.DataSource = GetCourseNames(semesterFilter.Text, programFilter.Text);
+                courseFilter.DisplayMember = "course_name";
+                courseFilter.Text = null;
+                label4.ForeColor = Color.Black;
+            }
+        }
+
+        private DataTable GetCourseNames(string semester, string program)
+        {
+
+            string query = "SELECT course_name FROM ProgramHasCourse WHERE semester_number = @semester AND program_name = @program";
+
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@semester", semester);
+                        command.Parameters.AddWithValue("@program", program);
+
+                        connection.Open();
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            dataTable.Load(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error retrieving course names: " + ex.Message);
+            }
+
+            return dataTable;
+        }
+
+        private void programFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            semesterFilter.Enabled = true;
+            semesterFilter.DataSource = GetSemester();
+            semesterFilter.DisplayMember = "semester_number";
+            semesterFilter.Text = null;
+            label4.ForeColor = Color.Gray;
+            courseFilter.Enabled = false;
+            label3.ForeColor = Color.Black;
+            try
+            {
+                if (programFilter.SelectedItem != null)
+                {
+                    programFilter.Text = programFilter.SelectedItem.ToString();
+                }
+                GetSemester();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private DataTable GetSemester()
+        {
+            string query = "select * from Semester";
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            return dataTable;
+        }
+
+        private void courseFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (courseFilter.SelectedItem != null)
+                {
+                    courseFilter.Text = courseFilter.SelectedItem.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
     }
 }
