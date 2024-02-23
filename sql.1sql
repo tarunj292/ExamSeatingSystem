@@ -562,3 +562,30 @@ SELECT sic.roll_number, sic.room_number, sic.bench_name, sic.block_number, phc.p
 FROM StudentSeatInClassroom sic
 INNER JOIN StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number
 INNER JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID;
+
+
+
+
+
+
+
+SELECT 
+    s.room_number,
+    s.block_number,
+    p.program_name,
+    MIN(e.roll_number) AS min_roll_number,
+    MAX(e.roll_number) AS max_roll_number,
+    COUNT(e.roll_number) AS roll_number_count
+FROM 
+    StudentSeatInClassroom s
+INNER JOIN 
+    StudentEnrollsProgramInYear e ON s.roll_number = e.roll_number
+INNER JOIN 
+    ProgramHasCourse pc ON e.ProgCour_ID = pc.ProgCour_ID
+INNER JOIN 
+    Program p ON pc.program_name = p.program_name
+GROUP BY 
+    s.room_number,
+    s.block_number,
+    p.program_name;
+
