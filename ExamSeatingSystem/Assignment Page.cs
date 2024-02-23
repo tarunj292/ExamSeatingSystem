@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -244,7 +245,7 @@ namespace ExamSeatingSystem
                         string course = null;
                         foreach (DataGridViewCell cell in row.Cells)
                         {
-                            int semester = (int)row.Cells[1].Value;
+                            int semester = Convert.ToInt32(row.Cells[1].Value);
                             program = (string)row.Cells[2].Value;
                             course = (string)row.Cells[3].Value;
                             studentsList = GetStudentsFromDB(program, semester, course);
@@ -559,6 +560,93 @@ namespace ExamSeatingSystem
 
         private void done_Click(object sender, EventArgs e)
         {
+
+            Boolean first = true;
+            private void PrintDataIntoPDF()
+            {
+                FileMode fm;
+                if (first)
+                {
+                    fm = FileMode.Create;
+                    first = false;
+                }
+                else
+                {
+                    fm = FileMode.Append;
+                }
+                using (FileStream fs = new FileStream("C://Tarun_java//seating.pdf", fm))
+                {
+                    Document document = new Document();
+                    PdfWriter.GetInstance(document, fs);
+                    document.Open();
+                    foreach (var classroom in classrooms)
+                    {
+                        document.Add(new Paragraph("Room No: " + classroom.Key));
+                        //Console.WriteLine(classroom.Value.Count * 2); // Print size of classroom so mul by 2
+
+                        // Calculate & print starting and last roll number for each unique course
+                        Dictionary<string, long> startingRollNumbers = new Dictionary<string, long>();
+                        Dictionary<string, long> lastRollNumbers = new Dictionary<string, long>();
+                        foreach (var bench in classroom.Value)
+                        {
+                            foreach (var student in bench)
+                            {
+                                string subject = student.Item2;
+                                long rollNumber = student.Item1;
+
+                                if (!startingRollNumbers.ContainsKey(subject))
+                                {
+                                    startingRollNumbers.Add(subject, rollNumber);
+                                }
+                                else
+                                {
+                                    startingRollNumbers[subject] = Math.Min(startingRollNumbers[subject], rollNumber);
+                                }
+
+                                // Update last roll number for each subject
+                                if (!lastRollNumbers.ContainsKey(subject))
+                                {
+                                    lastRollNumbers.Add(subject, rollNumber);
+                                }
+                                else
+                                {
+                                    lastRollNumbers[subject] = Math.Max(lastRollNumbers[subject], rollNumber);
+                                }
+                            }
+                        }
+                        /*foreach(var block in blockNumber)
+                        {
+                            foreach (var entry in startingRollNumbers)
+                            {
+                                MessageBox.Show(block+ "" + entry.Key + classroom.Key);
+                                if (block == entry.Key + classroom.Key)
+                                {
+                                    document.Add(new Paragraph($"Block: {block},Subject: {entry.Key}, Starting Roll Number: {entry.Value}, Last Roll Number: {lastRollNumbers[entry.Key]}"));
+                                    break;
+                                }
+                            }
+                        }*/
+                        foreach (var entry in startingRollNumbers)
+                        {
+                            document.Add(new Paragraph($"Block: ,Subject: {entry.Key}, Starting Roll Number: {entry.Value}, Last Roll Number: {lastRollNumbers[entry.Key]}"));
+                        }
+
+                        // Print students assigned to each bench
+                        foreach (var bench in classroom.Value)
+                        {
+                            document.Add(new Paragraph("Bench:"));
+                            foreach (var student in bench)
+                            {
+                                document.Add(new Paragraph($"  {student.Item1}: {student.Item2}"));
+                            }
+                        }
+                        document.Add(new Paragraph());
+                    }
+                    //I will close document when user click finished
+                    document.Close();
+                }
+            }
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
