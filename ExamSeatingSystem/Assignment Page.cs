@@ -22,7 +22,7 @@ namespace ExamSeatingSystem
             InitializeComponent();
         }
 
-        private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=examcell;Integrated Security=True";
+        private readonly string connectionString = "Data Source=31D-LAB3-41\\MSSQLSERVER01;Initial Catalog=ExamCell;Integrated Security=True";
 
         private void AddClassRoom_Click(object sender, EventArgs e)
         {
@@ -100,8 +100,42 @@ namespace ExamSeatingSystem
 
         private void AssignmentPage_Load(object sender, EventArgs e)
         {
+            programFilter.DataSource = GetProgramNames();
+            programFilter.DisplayMember = "program_name";
+            programFilter.Text = null;
+
+
+            semesterFilter.Enabled = false;
+            semesterFilter.Text = null;
+            label3.ForeColor = Color.Gray;
+
+
+
+            courseFilter.Enabled = false;
+            courseFilter.Text = null;
+            label4.ForeColor = Color.Gray;
             CountStudentsByDetails();
             GetClassroomData();
+        }
+
+        private DataTable GetProgramNames()
+        {
+            string query = "SELECT distinct program_name FROM ProgramHasCourse";
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+
+            return dataTable;
         }
 
         private void GetClassroomData()
@@ -396,7 +430,7 @@ namespace ExamSeatingSystem
 
         private void insertCSVtoDB_Click(object sender, EventArgs e)
         {
-            InsertProgrammeSemCourseData(@"C:\Users\tarun\Downloads\New Text Document.csv");
+            InsertProgrammeSemCourseData(@"C:\Users\admin\Downloads\New Text Document.csv");
             MessageBox.Show("Successfully Inserted Data");
         }
 
@@ -579,6 +613,124 @@ namespace ExamSeatingSystem
             }
 
 
+        }
+
+        private void semesterFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (semesterFilter.SelectedItem != null)
+                {
+
+                    semesterFilter.Text = semesterFilter.Text.ToString();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error Sem: " + ex.Message);
+            }
+            finally
+            {
+
+                courseFilter.Enabled = true;
+                courseFilter.DataSource = GetCourseNames(semesterFilter.Text, programFilter.Text);
+                courseFilter.DisplayMember = "course_name";
+                courseFilter.Text = null;
+                label4.ForeColor = Color.Black;
+            }
+        }
+
+        private DataTable GetCourseNames(string semester, string program)
+        {
+
+            string query = "SELECT course_name FROM ProgramHasCourse WHERE semester_number = @semester AND program_name = @program";
+
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@semester", semester);
+                        command.Parameters.AddWithValue("@program", program);
+
+                        connection.Open();
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            dataTable.Load(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error retrieving course names: " + ex.Message);
+            }
+
+            return dataTable;
+        }
+
+        private void programFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            semesterFilter.Enabled = true;
+            semesterFilter.DataSource = GetSemester();
+            semesterFilter.DisplayMember = "semester_number";
+            semesterFilter.Text = null;
+            label4.ForeColor = Color.Gray;
+            courseFilter.Enabled = false;
+            label3.ForeColor = Color.Black;
+            try
+            {
+                if (programFilter.SelectedItem != null)
+                {
+                    programFilter.Text = programFilter.SelectedItem.ToString();
+                }
+                GetSemester();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private DataTable GetSemester()
+        {
+            string query = "select * from Semester";
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            return dataTable;
+        }
+
+        private void courseFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (courseFilter.SelectedItem != null)
+                {
+                    courseFilter.Text = courseFilter.SelectedItem.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
     }
 }
