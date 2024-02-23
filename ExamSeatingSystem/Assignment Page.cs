@@ -244,7 +244,7 @@ namespace ExamSeatingSystem
                         string course = null;
                         foreach (DataGridViewCell cell in row.Cells)
                         {
-                            int semester = (int)row.Cells[1].Value;
+                            int semester = Convert.ToInt32(row.Cells[1].Value);
                             program = (string)row.Cells[2].Value;
                             course = (string)row.Cells[3].Value;
                             studentsList = GetStudentsFromDB(program, semester, course);
