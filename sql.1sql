@@ -1,0 +1,564 @@
+create database ExamCell;				
+use ExamCell;
+
+
+-- Creating Student Table				
+CREATE TABLE Student (				
+    roll_number BIGINT PRIMARY KEY,			
+    isActive BIT NOT NULL,	
+    isAssigned BIT NOT NULL,	
+    isDisable BIT NOT NULL				
+);
+				
+-- Creating Program Table				
+CREATE TABLE Program (				
+    program_name VARCHAR(250) PRIMARY KEY				
+)				
+				
+-- Creating Semester Table				
+CREATE TABLE Semester (				
+    semester_number varchar(5) PRIMARY KEY				
+)
+drop table Semester
+				
+-- Creating Course Table				
+CREATE TABLE Course (				
+    course_name VARCHAR(150) PRIMARY KEY				
+)				
+
+-- Creating SemesterHasCourse Table				
+CREATE TABLE ProgramHasCourse (				
+    ProgCour_ID INT IDENTITY(1,1) PRIMARY KEY,			
+    program_name VARCHAR(250),				
+    semester_number varchar(5),		
+    course_name VARCHAR(150),
+    CONSTRAINT FK_program_name FOREIGN KEY (program_name) REFERENCES Program(program_name),
+    CONSTRAINT FK_semester_number FOREIGN KEY (semester_number) REFERENCES Semester(semester_number),
+    CONSTRAINT FK_course_name FOREIGN KEY (course_name) REFERENCES Course(course_name),
+    CONSTRAINT UC_ProgramCourse UNIQUE (program_name,semester_number,course_name),
+);				
+DBCC CHECKIDENT ('ProgramHasCourse', RESEED, 0);
+		
+CREATE TABLE StudentEnrollsProgramInYear (				
+    StudEnrollProgYr_ID INT IDENTITY(1,1) PRIMARY KEY,			
+    roll_number BIGINT,
+    ProgCour_ID INT,
+    CONSTRAINT FK_roll_number FOREIGN KEY (roll_number) REFERENCES Student(roll_number),
+    CONSTRAINT FK_ProgCour_ID FOREIGN KEY (ProgCour_ID) REFERENCES ProgramHasCourse(ProgCour_ID),
+);
+
+--chatgpt query
+CREATE TABLE classroom (
+    room_number VARCHAR(10),
+    bench_name VARCHAR(5) NOT NULL,
+	isEmpty BIT NOT NULL DEFAULT 1
+	PRIMARY KEY (room_number,bench_name)
+);
+
+CREATE TABLE StudentSeatInClassroom (
+    roll_number BIGINT,
+    room_number varchar(10),
+    bench_name VARCHAR(5) NOT NULL,
+    block_number VARCHAR(5),
+    FOREIGN KEY (roll_number) REFERENCES Student(roll_number),
+	UNIQUE(room_number, bench_name),
+	UNIQUE(bench_name,block_number),
+	UNIQUE (roll_number),
+	UNIQUE (room_number,bench_name,block_number),
+    FOREIGN KEY (room_number, bench_name) REFERENCES classroom(room_number, bench_name),
+    PRIMARY KEY (room_number, roll_number, bench_name)
+);
+
+select course_name from ProgramHasCourse where semester_number = 1 and program_name= 'Bachelor of Commerce Accounting & Finance'
+
+				
+select * from Student				
+select * from Program				
+select * from Semester				
+select * from Course			
+select * from ProgramHasCourse				
+select * from StudentEnrollsProgramInYear
+select * from classroom
+select * from StudentSeatInClassroom
+		
+	
+				
+delete from Student				
+delete from Program				
+delete from Semester				
+delete from Course				
+delete from StudentSeatInClassroom	
+delete from classroom
+delete from ProgramHasCourse				
+delete from StudentEnrollsProgramInYear
+
+
+
+drop table Student				
+drop table Program				
+drop table Semester				
+drop table Course				
+drop table StudentSeatInClassroom	
+drop table classroom
+drop table ProgramHasCourse				
+drop table StudentEnrollsProgramInYear
+
+
+
+INSERT INTO Student (roll_number, isActive, isAssigned, isDisable)
+VALUES
+(31011122001, 1, 0, 0),
+(31011122002, 1, 0, 0),
+(31011122003, 1, 0, 0),
+(31011122004, 1, 0, 0),
+(31011122005, 1, 0, 0),
+(31011122006, 1, 0, 0),
+(31011122007, 1, 0, 0),
+(31011122008, 1, 0, 0),
+(31011122009, 1, 0, 0),
+(31011122010, 1, 0, 0),
+(31011122011, 1, 0, 0),
+(31011122012, 1, 0, 0),
+(31011122013, 1, 0, 0),
+(31011122014, 1, 0, 0),
+(31011122015, 1, 0, 0),
+(31011222001, 1, 0, 0),
+(31011222002, 1, 0, 0),
+(31011222003, 1, 0, 0),
+(31011222004, 1, 0, 0),
+(31011222005, 1, 0, 0),
+(31011222006, 1, 0, 0),
+(31011222007, 1, 0, 0),
+(31011222008, 1, 0, 0),
+(31011222009, 1, 0, 0),
+(31011222010, 1, 0, 0),
+(31011222011, 1, 0, 0),
+(31011222012, 1, 0, 0),
+(31011222013, 1, 0, 0),
+(31011222014, 1, 0, 0),
+(31011222015, 1, 0, 0),
+(31011222016, 1, 0, 0),
+(31011222017, 1, 0, 0),
+(31011222018, 1, 0, 0),
+(31011222019, 1, 0, 0),
+(31011222020, 1, 0, 0),
+(31011222021, 1, 0, 0),
+(31011222022, 1, 0, 0),
+(31011222023, 1, 0, 0),
+(31011222024, 1, 0, 0),
+(31011222025, 1, 0, 0),
+(31011222026, 1, 0, 0),
+(31011222027, 1, 0, 0),
+(31011222028, 1, 0, 0),
+(31011222029, 1, 0, 0),
+(31011222030, 1, 0, 0),
+(31011222031, 1, 0, 0),
+(31011222032, 1, 0, 0),
+(31011222033, 1, 0, 0),
+(31011222034, 1, 0, 0),
+(31011222035, 1, 0, 0),
+(31011222036, 1, 0, 0),
+(31011222037, 1, 0, 0),
+(31011222038, 1, 0, 0),
+(31011222039, 1, 0, 0),
+(31011222040, 1, 0, 0),
+(31011222041, 1, 0, 0),
+(31011222042, 1, 0, 0),
+(31011222043, 1, 0, 0),
+(31011222044, 1, 0, 0),
+(31011222045, 1, 0, 0),
+(31011222046, 1, 0, 0),
+(31011222047, 1, 0, 0),
+(31011222048, 1, 0, 0),
+(31011222049, 1, 0, 0),
+(31011222050, 1, 0, 0),
+(31011222051, 1, 0, 0),
+(31011222052, 1, 0, 0),
+(31011222053, 1, 0, 0),
+(31011222054, 1, 0, 0),
+(31011222055, 1, 0, 0),
+(31011222056, 1, 0, 0),
+(31011222057, 1, 0, 0),
+(31011222058, 1, 0, 0),
+(31011222059, 1, 0, 0),
+(31011222060, 1, 0, 0),
+(31011222061, 1, 0, 0),
+(31011222062, 1, 0, 0),
+(31011222063, 1, 0, 0),
+(31011222064, 1, 0, 0),
+(31011222065, 1, 0, 0),
+(31011222066, 1, 0, 0),
+(31011222067, 1, 0, 0),
+(31011222068, 1, 0, 0),
+(31011222069, 1, 0, 0),
+(31011222070, 1, 0, 0),
+(31011222071, 1, 0, 0),
+(31011222072, 1, 0, 0),
+(31011222073, 1, 0, 0),
+(31011222074, 1, 0, 0),
+(31011222075, 1, 0, 0),
+(31011222076, 1, 0, 0),
+(31011222077, 1, 0, 0),
+(31011222078, 1, 0, 0),
+(31011222079, 1, 0, 0),
+(31011222080, 1, 0, 0),
+(31011222081, 1, 0, 0),
+(31011222082, 1, 0, 0),
+(31011222083, 1, 0, 0),
+(31011222084, 1, 0, 0),
+(31011222085, 1, 0, 0),
+(31011222086, 1, 0, 0),
+(31011222087, 1, 0, 0),
+(31011222088, 1, 0, 0),
+(31011222089, 1, 0, 0),
+(31011222090, 1, 0, 0),
+(31011222091, 1, 0, 0),
+(31011222092, 1, 0, 0),
+(31011222093, 1, 0, 0),
+(31011222094, 1, 0, 0),
+(31011222095, 1, 0, 0),
+(31011222096, 1, 0, 0),
+(31011222097, 1, 0, 0),
+(31011222098, 1, 0, 0),
+(31011222099, 1, 0, 0),
+(31011222100, 1, 0, 0),
+(31011222101, 1, 0, 0),
+(31011222102, 1, 0, 0),
+(31011222103, 1, 0, 0),
+(31011222104, 1, 0, 0),
+(31011222105, 1, 0, 0),
+(31011222106, 1, 0, 0),
+(31011222107, 1, 0, 0),
+(31011222108, 1, 0, 0),
+(31011222109, 1, 0, 0),
+(31011222110, 1, 0, 0),
+(31011222111, 1, 0, 0),
+(31011222112, 1, 0, 0),
+(31011222113, 1, 0, 0),
+(31011222114, 1, 0, 0),
+(31011222115, 1, 0, 0),
+(31011222116, 1, 0, 0),
+(31011222117, 1, 0, 0),
+(31011222118, 1, 0, 0),
+(31011222119, 1, 0, 0),
+(31011222120, 1, 0, 0);
+
+INSERT INTO Student (roll_number, isActive, isAssigned, isDisable) VALUES (310112220134,1,1,0);
+select * from Student where roll_number = 310112220134
+
+INSERT INTO StudentEnrollsProgramInYear (roll_number, ProgCour_ID)
+VALUES
+(31011122001, 6),
+(31011122002, 6),
+(31011122003, 6),
+(31011122004, 6),
+(31011122005, 6),
+(31011122006, 6),
+(31011122007, 6),
+(31011122008, 6),
+(31011122009, 6),
+(31011122010, 6),
+(31011122011, 12),
+(31011122012, 12),
+(31011122013, 12),
+(31011122014, 12),
+(31011122015, 12),
+(31011222001, 12),
+(31011222002, 12),
+(31011222003, 18),
+(31011222004, 18),
+(31011222005, 18),
+(31011222006, 18),
+(31011222007, 18),
+(31011222008, 18),
+(31011222009, 7),
+(31011222010, 7),
+(31011222011, 7),
+(31011222012, 7),
+(31011222013, 13),
+(31011222014, 13),
+(31011222015, 13),
+(31011222016, 13),
+(31011222017, 7),
+(31011222018, 7),
+(31011222019, 7),
+(31011222020, 7),
+(31011222021, 7),
+(31011222022, 1),
+(31011222023, 14),
+(31011222024, 14),
+(31011222025, 14),
+(31011222026, 14),
+(31011222027, 14),
+(31011222028, 14),
+(31011222029, 15),
+(31011222030, 15),
+(31011222031, 15),
+(31011222032, 15),
+(31011222033, 15),
+(31011222034, 9),
+(31011222035, 9),
+(31011222036, 9),
+(31011222037, 9),
+(31011222038, 9),
+(31011222039, 1),
+(31011222040, 1),
+(31011222041, 1),
+(31011222042, 1),
+(31011222043, 1),
+(31011222044, 1),
+(31011222045, 1),
+(31011222046, 9),
+(31011222047, 9),
+(31011222048, 9),
+(31011222049, 9),
+(31011222050, 15),
+(31011222051, 13),
+(31011222052, 18),
+(31011222053, 18),
+(31011222054, 18),
+(31011222055, 18),
+(31011222056, 18),
+(31011222057, 13),
+(31011222058, 13),
+(31011222059, 13),
+(31011222060, 13),
+(31011222061, 13),
+(31011222062, 13),
+(31011222063, 13),
+(31011222064, 13),
+(31011222065, 13),
+(31011222066, 2),
+(31011222067, 2),
+(31011222068, 2),
+(31011222069, 2),
+(31011222070, 2),
+(31011222071, 2),
+(31011222072, 2),
+(31011222073, 2),
+(31011222074, 2),
+(31011222075, 2),
+(31011222076, 3),
+(31011222077, 3),
+(31011222078, 3),
+(31011222079, 3),
+(31011222080, 3),
+(31011222081, 3),
+(31011222082, 3),
+(31011222083, 3),
+(31011222084, 4),
+(31011222085, 4),
+(31011222086, 4),
+(31011222087, 4),
+(31011222088, 3),
+(31011222089, 12),
+(31011222090, 12),
+(31011222091, 12),
+(31011222092, 12),
+(31011222093, 14),
+(31011222094, 14),
+(31011222095, 14),
+(31011222096, 14),
+(31011222097, 14),
+(31011222098, 14),
+(31011222099, 14),
+(31011222100, 14),
+(31011222101, 14),
+(31011222102, 14),
+(31011222103, 14),
+(31011222104, 14),
+(31011222105, 15),
+(31011222106, 15),
+(31011222107, 15),
+(31011222108, 15),
+(31011222109, 16),
+(31011222110, 16),
+(31011222111, 16),
+(31011222112, 16),
+(31011222113, 17),
+(31011222114, 17),
+(31011222115, 17),
+(31011222116, 17),
+(31011222117, 18),
+(31011222118, 18),
+(31011222119, 18),
+(31011222120, 18);
+
+INSERT INTO StudentSeatInClassroom(room_number, roll_number, bench_name, block_number)
+VALUES
+(501,31011222001,'A1','16B'),   
+(501,31011222002,'A2','16B'),
+(501,31011222003,'A3','16B'),
+(501,31011222004,'A4','16B'),
+(501,31011222005,'A5','16B'),
+(501,31011222006,'A6','16B'),
+(501,31011222007,'A7','16B'),
+(501,31011222008,'A8','16B'),
+(501,31011222009,'A9','16B'),
+(501,31011222010,'A10','16B'),
+(501,31011222011,'A11','16B'),
+(501,31011222012,'A12','16B'),
+(501,31011222013,'A13','16B'),
+(501,31011222014,'A14','16B'),
+(501,31011222015,'A15','16B'),
+(501,31011222016,'A16','16B'),
+(501,31011222017,'A17','16B'),
+(501,31011222018,'A18','16B'),
+(501,31011222019,'A19','16B'),
+(501,31011222020,'B1','16B'),
+(501,31011222021,'B2','16B'),
+(501,31011222022,'B3','16B'),
+(501,31011222023,'B4','16B'),
+(501,31011222024,'B5','16B'),
+(501,31011222025,'B6','16B'),
+(501,31011222026,'B7','16B'),
+(501,31011222027,'B8','16B'),
+(501,31011222028,'B9','16B'),
+(501,31011222029,'B10','16B'),
+(501,31011222030,'B11','16B'),
+(501,31011222031,'B12','16B'),
+(501,31011222032,'B13','16B'),
+(501,31011222033,'B14','16B'),
+(501,31011222034,'B15','16B'),
+(501,31011222035,'B16','16B'),
+(501,31011222036,'B17','16B'),
+(501,31011222037,'B18','16B'),
+(501,31011222038,'B19','16B'),
+(502,31011222039,'A1','12B'),
+(502,31011222040,'A19','12B'),
+(502,31011222041,'A2','12B'),
+(502,31011222042,'A3','12B'),
+(502,31011222043,'A4','12B'),
+(502,31011222044,'A5','12B'),
+(502,31011222045,'A6','12B'),
+(502,31011222046,'A7','12B'),
+(502,31011222047,'A8','12B'),
+(502,31011222048,'A9','12B'),
+(502,31011222049,'A10','12B'),
+(502,31011222050,'A11','12B'),
+(502,31011222051,'A12','12B'),
+(502,31011222052,'A13','12B'),
+(502,31011222053,'A14','12B'),
+(502,31011222054,'A15','12B'),
+(502,31011222055,'A16','12B'),
+(502,31011222056,'A17','12B'),
+(502,31011222057,'A18','12B'),
+(502,31011222058,'B1','12B'),
+(502,31011222059,'B2','12B'),
+(502,31011222060,'B3','12B'),
+(502,31011222061,'B4','12B'),
+(502,31011222062,'B5','12B'),
+(502,31011222063,'B6','12B'),
+(502,31011222064,'B7','12B'),
+(502,31011222065,'B8','12B'),
+(502,31011222066,'B9','12B'),
+(502,31011222067,'B10','12B'),
+(502,31011222068,'B11','12B'),
+(502,31011222069,'B12','12B'),
+(502,31011222070,'B14','12B'),
+(502,31011222071,'B15','12B'),
+(502,31011222072,'B16','12B'),
+(502,31011222073,'B17','12B'),
+(502,31011222074,'B18','12B'),
+(503,31011222075,'A1','78H'),
+(503,31011222076,'A2','78H'),
+(503,31011222077,'A3','78H'),
+(503,31011222078,'A4','78H'),
+(503,31011222079,'A5','78H'),
+(503,31011222080,'A6','78H'),
+(503,31011222081,'A7','78H'),
+(503,31011222082,'A8','78H'),
+(503,31011222083,'A9','78H'),
+(503,31011222084,'A10','78H'),
+(503,31011222085,'A11','78H'),
+(503,31011222086,'A12','78H'),
+(503,31011222087,'B1','78H'),
+(503,31011222088,'B2','78H'),
+(503,31011222089,'B3','78H'),
+(503,31011222090,'B4','78H'),
+(503,31011222091,'B5','78H'),
+(503,31011222092,'B6','78H'),
+(503,31011222093,'B7','78H'),
+(503,31011222094,'B8','78H'),
+(503,31011222095,'B9','78H'),
+(503,31011222096,'B10','78H'),
+(503,31011222097,'B11','78H'),
+(503,31011222098,'B12','78H'),
+(504,31011222099,'A1','99E'),
+(504,31011222100,'A2','99E'),
+(504,31011222101,'A3','99E'),
+(504,31011222102,'A4','99E'),
+(504,31011222103,'A5','99E'),
+(504,31011222104,'A6','99E'),
+(504,31011222105,'A7','99E'),
+(504,31011222106,'A8','99E'),
+(504,31011222107,'A9','99E'),
+(504,31011222108,'A10','99E'),
+(504,31011222109,'A11','99E'),
+(504,31011222110,'A12','99E'),
+(504,31011222111,'B1','99E'),
+(504,31011222112,'B2','99E'),
+(504,31011222113,'B3','99E'),
+(504,31011222114,'B4','99E'),
+(504,31011222115,'B5','99E'),
+(504,31011222116,'B6','99E'),
+(504,31011222117,'B7','99E'),
+(504,31011222118,'B8','99E'),
+(504,31011222119,'B9','99E'),
+(504,31011222120,'B10','99E');
+
+
+SELECT phc.semester_number AS Sem,
+       phc.program_name AS Program,
+       phc.course_name AS Course,
+       MIN(s.roll_number) AS FromSeat,
+       MAX(s.roll_number) AS ToSeat,
+	   COUNT(s.roll_number) AS TotalStudents,
+       COUNT(s.isAssigned) AS UnAssigned
+FROM ProgramHasCourse AS phc
+INNER JOIN StudentEnrollsProgramInYear AS sep ON phc.ProgCour_ID = sep.ProgCour_ID
+INNER JOIN Student AS s ON sep.roll_number = s.roll_number
+WHERE phc.program_name = 'BSC CS'
+  AND phc.semester_number = '1'
+  AND phc.course_name = 'Modern Computer Architecture'
+  AND s.isAssigned = 0
+GROUP BY phc.program_name, phc.course_name, phc.semester_number;
+
+SELECT 
+    phc.program_name, phc.semester_number, phc.course_name,
+    sep.roll_number
+FROM 
+    ProgramHasCourse AS phc
+INNER JOIN 
+    StudentEnrollsProgramInYear AS sep ON phc.ProgCour_ID = sep.ProgCour_ID
+INNER JOIN 
+    Student AS s ON sep.roll_number = s.roll_number
+WHERE 
+    phc.program_name = 'BSC CS'
+    AND phc.semester_number = 1
+    AND phc.course_name = 'Modern Computer Architecture'
+    AND s.isAssigned = 0
+	AND s.isActive = 1;
+
+
+
+SELECT COUNT(sep.roll_number) AS RollNumberCount, phc.program_name, phc.course_name, phc.semester_number
+FROM ProgramHasCourse AS phc
+INNER JOIN StudentEnrollsProgramInYear AS sep ON phc.ProgCour_ID = sep.ProgCour_ID
+GROUP BY phc.program_name, phc.course_name, phc.semester_number;
+
+
+SELECT 
+    room_number as RoomNumber, 
+    COUNT(DISTINCT bench_name) AS Capacity, 
+    SUM(CASE WHEN isEmpty = 1 THEN 1 ELSE 0 END) AS RemainingCapacity
+FROM 
+    classroom
+GROUP BY 
+    room_number;
+
+
+SELECT sic.roll_number, sic.room_number, sic.bench_name, sic.block_number, phc.program_name
+FROM StudentSeatInClassroom sic
+INNER JOIN StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number
+INNER JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID;
