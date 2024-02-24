@@ -16,6 +16,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Data.Common;
+using System.Collections;
 
 namespace ExamSeatingSystem
 {
@@ -580,77 +581,57 @@ namespace ExamSeatingSystem
             }
         }
 
-        Dictionary<string, Dictionary<string, List<KeyValuePair<string, long>>>> classroomCopy = new Dictionary<string, Dictionary<string, List<KeyValuePair<string, long>>>>();
-        Dictionary<string, List<KeyValuePair<string, long>>> blockNumberDict = new Dictionary<string, List<KeyValuePair<string, long>>>();
-        List<KeyValuePair<string, long>> benchStudentPairs = new List<KeyValuePair<string, long>>();
-        private void WillGiveLater()
+        private void WillGiveLater2()
         {
+            ArrayList dataList = new ArrayList();
+            HashSet<string> roomNumber = new HashSet<string>();
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                string query = "SELECT sic.roll_number, sic.room_number, sic.bench_name, sic.block_number, phc.program_name FROM StudentSeatInClassroom sic INNER JOIN StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number INNER JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID order by room_number;";
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    using (SqlDataReader re = cmd.ExecuteReader())
-                    {
-                        while (re.Read())
-                        {
-                            long rollNumber = re.GetInt64(0);
-                            string roomNumber = re.GetString(1);
-                            string benchName = re.GetString(2);
-                            string blockNumber = re.GetString(re.GetOrdinal("block_number"));
-                            string programName = re.GetString(re.GetOrdinal("program_name"));
-                            MessageBox.Show($"{rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
-                            if (classroomCopy.ContainsKey(roomNumber))
-                            {
-                                if (blockNumberDict.ContainsKey(blockNumber))
-                                {
-                                    MessageBox.Show($"1: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
-                                    benchStudentPairs.Add(new KeyValuePair<string, long>(benchName, rollNumber));
-                                    blockNumberDict.Add(blockNumber, benchStudentPairs);
-                                    classroomCopy.Add(roomNumber, blockNumberDict);
-                                }
-                                else
-                                {
-                                    benchStudentPairs.Clear();
-                                    MessageBox.Show($"2: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
-                                    benchStudentPairs.Add(new KeyValuePair<string, long>(benchName, rollNumber));
-                                    MessageBox.Show($"3: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
-                                    blockNumberDict.Add(blockNumber, benchStudentPairs);
-                                }
-                            }
-                            else
-                            {
-                                benchStudentPairs.Clear();
-                                blockNumberDict.Clear();
-                                MessageBox.Show($"4: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
-                                benchStudentPairs.Add(new KeyValuePair<string, long>(benchName, rollNumber));
-                                MessageBox.Show($"5: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
-                                blockNumberDict.Add(blockNumber, benchStudentPairs);
-                                MessageBox.Show($"6: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
-                                classroomCopy.Add(roomNumber, blockNumberDict);
-                            }
+                string selectQuery = @"
+        SELECT
+            sic.room_number,
+            sic.block_number,
+            sic.bench_name,
+            sic.roll_number,
+            phc.program_name
+        FROM
+            StudentSeatInClassroom sic
+        INNER JOIN
+            StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number
+        INNER JOIN
+            ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID
+        ORDER BY
+            sic.room_number,
+            sic.block_number;";
 
+                using (SqlCommand cmd = new SqlCommand(selectQuery, con))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Create a dictionary to store row data
+                            Dictionary<string, object> row = new Dictionary<string, object>();
+                            roomNumber.Add(reader.GetString(0));
+                            // Add each column to the dictionary
+                            row["room_number"] = reader.GetString(0);
+                            row["block_number"] = reader.GetString(1);
+                            row["bench_name"] = reader.GetString(2);
+                            row["roll_number"] = reader.GetInt64(3);
+                            row["program_name"] = reader.GetString(4);
+
+                            // Add the dictionary to the ArrayList
+                            dataList.Add(row);
                         }
                     }
-
                 }
             }
-            /*foreach(var classroom in classroomCopy)
-            {
-                MessageBox.Show("Room" + classroom.Key);
-                foreach (var block in classroom.Value)
-                {
-                    MessageBox.Show("Block" + block.Key);
-                    foreach (var studentBenchPair in  block.Value)
-                    {
-                        MessageBox.Show(studentBenchPair.Key + " " + studentBenchPair.Value.ToString());
-                    }
-                }
-            }*/
+            PrintDataIntoPDF(roomNumber, dataList);
         }
+
         Boolean first = true;
-        private void PrintDataIntoPDF()
+        private void PrintDataIntoPDF(HashSet<string> roomNumber, ArrayList dataList)
         {
             FileMode fm;
             if (first)
@@ -662,19 +643,46 @@ namespace ExamSeatingSystem
             {
                 fm = FileMode.Append;
             }
-            /*using (FileStream fs = new FileStream("C://Tarun_java//seating.pdf", fm))
+            foreach (string room in roomNumber)
             {
-                Document document = new Document();
-                PdfWriter.GetInstance(document, fs);
-                document.Open();
-                
-                document.Close();
-            }*/
+                string filename = "seating_" + room + ".pdf";
+
+                // Provide the full file path
+                string filePath = Path.Combine("C://Tarun_java//", filename);
+                using (FileStream fs = new FileStream(filePath, fm))
+                {
+                    Document document = new Document();
+                    PdfWriter.GetInstance(document, fs);
+                    document.Open();
+
+                    // Create a table with 5 columns
+                    PdfPTable table = new PdfPTable(5);
+
+                    // Add column headers
+                    table.AddCell("Room Number");
+                    table.AddCell("Bench Name");
+                    table.AddCell("Roll Number");
+                    table.AddCell("Program Name");
+
+                    foreach (Dictionary<string, object> row in dataList)
+                    {
+                        // Add data to the table
+                        table.AddCell(row["room_number"].ToString());
+                        table.AddCell(row["bench_name"].ToString());
+                        table.AddCell(row["roll_number"].ToString());
+                        table.AddCell(row["program_name"].ToString());
+                    }
+
+                    // Add the table to the document
+                    document.Add(table);
+
+                    document.Close();
+                }
+            }            
         }
         private void done_Click(object sender, EventArgs e)
         {
-            WillGiveLater();
-            PrintDataIntoPDF();
+            WillGiveLater2();
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
