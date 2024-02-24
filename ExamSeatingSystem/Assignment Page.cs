@@ -627,22 +627,130 @@ namespace ExamSeatingSystem
                     }
                 }
             }
-            PrintDataIntoPDF(roomNumber, dataList);
+            PrintClassroomPDF(roomNumber, dataList);
+            PrintAttendancePDF(roomNumber, dataList);
+            PrintAbsentPDF(roomNumber, dataList);
         }
 
-        Boolean first = true;
-        private void PrintDataIntoPDF(HashSet<string> roomNumber, ArrayList dataList)
+        private void PrintAbsentPDF(HashSet<string> roomNumber, ArrayList dataList)
         {
-            FileMode fm;
-            if (first)
+
+            FileMode fm = FileMode.Create;
+            string filename = "absent.pdf";
+
+            // Provide the full file path
+            string filePath = Path.Combine("C://Tarun_java//", filename);
+            using (FileStream fs = new FileStream(filePath, fm))
             {
-                fm = FileMode.Create;
-                first = false;
+                Document document = new Document();
+                PdfWriter.GetInstance(document, fs);
+                document.Open();
+
+                foreach (string room in roomNumber)
+                {
+                    Dictionary<string, int> getProgramForRoom = new Dictionary<string, int>();
+                    // Create a new page for each room
+                    document.NewPage();
+                    Paragraph headingRoomNumber = new Paragraph("Room Number: " + room);
+                    headingRoomNumber.Alignment = Element.ALIGN_CENTER;
+                    document.Add(headingRoomNumber);
+                    // Create a table with 3 columns
+                    PdfPTable table = new PdfPTable(4);
+
+                    // Add column headers
+                    table.AddCell(new PdfPCell(new Phrase("Seat Nos. Allocated")) { Colspan = 2 });
+                    table.AddCell(new PdfPCell(new Phrase("Seat Nos. of the Absentees")) { Colspan = 2 });
+
+                    // Add column headers
+                    table.AddCell("Sr. No.");
+                    table.AddCell("Seat no.");
+                    table.AddCell("Sr. No.");
+                    table.AddCell("Seat no.");
+                    int serial = 0;
+                    foreach (Dictionary<string, object> row in dataList)
+                    {
+                        // Add data to the table if it belongs to the current room
+                        if (row["room_number"].ToString() == room)
+                        {
+                            if (!getProgramForRoom.ContainsKey(row["program_name"].ToString()))
+                            {
+                                getProgramForRoom.Add(row["program_name"].ToString(), 1);
+                                Paragraph headingProgramName = new Paragraph("ProgramName: " + row["program_name"]);
+                                headingProgramName.Alignment = Element.ALIGN_CENTER;
+                                document.Add(headingProgramName);
+                            }
+                            table.AddCell(serial++.ToString());
+                            table.AddCell(row["roll_number"].ToString());
+                            table.AddCell(serial++.ToString());
+                            table.AddCell("               ");
+                        }
+                    }
+
+                    // Add the table to the document
+                    document.Add(table);
+                }
+
+                document.Close();
             }
-            else
+        }
+
+        private void PrintAttendancePDF(HashSet<string> roomNumber, ArrayList dataList)
+        {
+            FileMode fm = FileMode.Create;
+            string filename = "attendance.pdf";
+
+            // Provide the full file path
+            string filePath = Path.Combine("C://Tarun_java//", filename);
+            using (FileStream fs = new FileStream(filePath, fm))
             {
-                fm = FileMode.Append;
+                Document document = new Document();
+                PdfWriter.GetInstance(document, fs);
+                document.Open();
+
+                foreach (string room in roomNumber)
+                {
+                    Dictionary<string, int> getProgramForRoom = new Dictionary<string, int>();
+                    // Create a new page for each room
+                    document.NewPage();
+                    Paragraph headingRoomNumber = new Paragraph("Room Number: " + room);
+                    headingRoomNumber.Alignment = Element.ALIGN_CENTER;
+                    document.Add(headingRoomNumber);
+                    // Create a table with 3 columns
+                    PdfPTable table = new PdfPTable(3);
+
+                    // Add column headers
+                    table.AddCell("Sr. No.");
+                    table.AddCell("Seat no.");
+                    table.AddCell("Signature");
+                    int serial = 0;
+                    foreach (Dictionary<string, object> row in dataList)
+                    {
+                        // Add data to the table if it belongs to the current room
+                        if (row["room_number"].ToString() == room)
+                        {
+                            if (!getProgramForRoom.ContainsKey(row["program_name"].ToString()))
+                            {
+                                getProgramForRoom.Add(row["program_name"].ToString(), 1);
+                                Paragraph headingProgramName = new Paragraph("ProgramName: " + row["program_name"]);
+                                headingProgramName.Alignment = Element.ALIGN_CENTER;
+                                document.Add(headingProgramName);
+                            }
+                            table.AddCell(serial++.ToString());
+                            table.AddCell(row["roll_number"].ToString());
+                            table.AddCell("               ");
+                        }
+                    }
+
+                    // Add the table to the document
+                    document.Add(table);
+                }
+
+                document.Close();
             }
+        }
+        private void PrintClassroomPDF(HashSet<string> roomNumber, ArrayList dataList)
+        {
+            FileMode fm = FileMode.Create;
             string filename = "classroomcopy.pdf";
 
             // Provide the full file path
@@ -655,14 +763,20 @@ namespace ExamSeatingSystem
 
                 foreach (string room in roomNumber)
                 {
+                    Dictionary<string, int> getProgramForRoom = new Dictionary<string, int>();
                     // Create a new page for each room
                     document.NewPage();
 
+                    Paragraph headingRoomNumber = new Paragraph("Room Number: " + room);
+                    headingRoomNumber.Alignment = Element.ALIGN_CENTER;
+                    document.Add(headingRoomNumber);
+
                     // Create a table with 4 columns
-                    PdfPTable table = new PdfPTable(4);
+                    //PdfPTable table = new PdfPTable(4);
+                    PdfPTable table = new PdfPTable(3);
 
                     // Add column headers
-                    table.AddCell("Room Number");
+                    //table.AddCell("Room Number");
                     table.AddCell("Bench Name");
                     table.AddCell("Roll Number");
                     table.AddCell("Program Name");
@@ -672,7 +786,14 @@ namespace ExamSeatingSystem
                         // Add data to the table if it belongs to the current room
                         if (row["room_number"].ToString() == room)
                         {
-                            table.AddCell(row["room_number"].ToString());
+                            if (!getProgramForRoom.ContainsKey(row["program_name"].ToString()))
+                            {
+                                getProgramForRoom.Add(row["program_name"].ToString(), 1);
+                                Paragraph headingProgramName = new Paragraph("ProgramName: " + row["program_name"]);
+                                headingProgramName.Alignment = Element.ALIGN_CENTER;
+                                document.Add(headingProgramName);
+                            }
+                            //table.AddCell(row["room_number"].ToString());
                             table.AddCell(row["bench_name"].ToString());
                             table.AddCell(row["roll_number"].ToString());
                             table.AddCell(row["program_name"].ToString());
@@ -685,7 +806,6 @@ namespace ExamSeatingSystem
 
                 document.Close();
             }
-
         }
         private void done_Click(object sender, EventArgs e)
         {
