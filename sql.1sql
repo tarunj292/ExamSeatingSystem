@@ -17,10 +17,9 @@ CREATE TABLE Program (
 				
 -- Creating Semester Table				
 CREATE TABLE Semester (				
-    semester_number varchar(5) PRIMARY KEY				
-)
-drop table Semester
-				
+    semester_number INT PRIMARY KEY				
+)				
+
 -- Creating Course Table				
 CREATE TABLE Course (				
     course_name VARCHAR(150) PRIMARY KEY				
@@ -30,7 +29,7 @@ CREATE TABLE Course (
 CREATE TABLE ProgramHasCourse (				
     ProgCour_ID INT IDENTITY(1,1) PRIMARY KEY,			
     program_name VARCHAR(250),				
-    semester_number varchar(5),		
+    semester_number INT,		
     course_name VARCHAR(150),
     CONSTRAINT FK_program_name FOREIGN KEY (program_name) REFERENCES Program(program_name),
     CONSTRAINT FK_semester_number FOREIGN KEY (semester_number) REFERENCES Semester(semester_number),
@@ -38,7 +37,7 @@ CREATE TABLE ProgramHasCourse (
     CONSTRAINT UC_ProgramCourse UNIQUE (program_name,semester_number,course_name),
 );				
 DBCC CHECKIDENT ('ProgramHasCourse', RESEED, 0);
-		
+
 CREATE TABLE StudentEnrollsProgramInYear (				
     StudEnrollProgYr_ID INT IDENTITY(1,1) PRIMARY KEY,			
     roll_number BIGINT,
@@ -47,7 +46,6 @@ CREATE TABLE StudentEnrollsProgramInYear (
     CONSTRAINT FK_ProgCour_ID FOREIGN KEY (ProgCour_ID) REFERENCES ProgramHasCourse(ProgCour_ID),
 );
 
---chatgpt query
 CREATE TABLE classroom (
     room_number VARCHAR(10),
     bench_name VARCHAR(5) NOT NULL,
@@ -57,7 +55,7 @@ CREATE TABLE classroom (
 
 CREATE TABLE StudentSeatInClassroom (
     roll_number BIGINT,
-    room_number varchar(10),
+    room_number VARCHAR(10),
     bench_name VARCHAR(5) NOT NULL,
     block_number VARCHAR(5),
     FOREIGN KEY (roll_number) REFERENCES Student(roll_number),
@@ -69,20 +67,18 @@ CREATE TABLE StudentSeatInClassroom (
     PRIMARY KEY (room_number, roll_number, bench_name)
 );
 
-select course_name from ProgramHasCourse where semester_number = 1 and program_name= 'Bachelor of Commerce Accounting & Finance'
-
-				
-select * from Student				
-select * from Program				
-select * from Semester				
+select * from Student
+select * from Program
+select * from Semester
 select * from Course			
-select * from ProgramHasCourse				
+select * from ProgramHasCourse
 select * from StudentEnrollsProgramInYear
+update StudentEnrollsProgramInYear set ProgCour_ID = 130 where ProgCour_ID = 18;
 select * from classroom
 select * from StudentSeatInClassroom
-		
-	
-				
+
+
+
 delete from Student				
 delete from Program				
 delete from Semester				
@@ -557,35 +553,18 @@ FROM
 GROUP BY 
     room_number;
 
-
-SELECT sic.roll_number, sic.room_number, sic.bench_name, sic.block_number, phc.program_name
-FROM StudentSeatInClassroom sic
-INNER JOIN StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number
-INNER JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID;
-
+SELECT DISTINCT phc.program_name
+FROM StudentEnrollsProgramInYear sep
+JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID
+WHERE sep.roll_number = 31011122001;
 
 
+SELECT phc.program_name
+FROM StudentSeatInClassroom ssc
+JOIN StudentEnrollsProgramInYear sep ON ssc.roll_number = sep.roll_number
+JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID
+WHERE ssc.room_number = @RoomNumber AND ssc.block_number = @blockNumber;
 
 
 
-
-SELECT 
-    s.room_number,
-    s.block_number,
-    p.program_name,
-    MIN(e.roll_number) AS min_roll_number,
-    MAX(e.roll_number) AS max_roll_number,
-    COUNT(e.roll_number) AS roll_number_count
-FROM 
-    StudentSeatInClassroom s
-INNER JOIN 
-    StudentEnrollsProgramInYear e ON s.roll_number = e.roll_number
-INNER JOIN 
-    ProgramHasCourse pc ON e.ProgCour_ID = pc.ProgCour_ID
-INNER JOIN 
-    Program p ON pc.program_name = p.program_name
-GROUP BY 
-    s.room_number,
-    s.block_number,
-    p.program_name;
-
+select roll_number from StudentSeatInClassroom where room_number = @RoomNumber AND block_number = @blockNumber;
