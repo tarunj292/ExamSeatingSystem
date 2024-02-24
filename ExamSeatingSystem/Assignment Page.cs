@@ -643,20 +643,23 @@ namespace ExamSeatingSystem
             {
                 fm = FileMode.Append;
             }
-            foreach (string room in roomNumber)
-            {
-                string filename = "seating_" + room + ".pdf";
+            string filename = "classroomcopy.pdf";
 
-                // Provide the full file path
-                string filePath = Path.Combine("C://Tarun_java//", filename);
-                using (FileStream fs = new FileStream(filePath, fm))
+            // Provide the full file path
+            string filePath = Path.Combine("C://Tarun_java//", filename);
+            using (FileStream fs = new FileStream(filePath, fm))
+            {
+                Document document = new Document();
+                PdfWriter.GetInstance(document, fs);
+                document.Open();
+
+                foreach (string room in roomNumber)
                 {
-                    Document document = new Document();
-                    PdfWriter.GetInstance(document, fs);
-                    document.Open();
+                    // Create a new page for each room
+                    document.NewPage();
 
                     // Create a table with 5 columns
-                    PdfPTable table = new PdfPTable(5);
+                    PdfPTable table = new PdfPTable(4);
 
                     // Add column headers
                     table.AddCell("Room Number");
@@ -666,19 +669,23 @@ namespace ExamSeatingSystem
 
                     foreach (Dictionary<string, object> row in dataList)
                     {
-                        // Add data to the table
-                        table.AddCell(row["room_number"].ToString());
-                        table.AddCell(row["bench_name"].ToString());
-                        table.AddCell(row["roll_number"].ToString());
-                        table.AddCell(row["program_name"].ToString());
+                        // Add data to the table if it belongs to the current room
+                        if (row["room_number"].ToString() == room)
+                        {
+                            table.AddCell(row["room_number"].ToString());
+                            table.AddCell(row["bench_name"].ToString());
+                            table.AddCell(row["roll_number"].ToString());
+                            table.AddCell(row["program_name"].ToString());
+                        }
                     }
 
                     // Add the table to the document
                     document.Add(table);
-
-                    document.Close();
                 }
-            }            
+
+                document.Close();
+            }
+
         }
         private void done_Click(object sender, EventArgs e)
         {
