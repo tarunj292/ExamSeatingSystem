@@ -13,6 +13,9 @@ using System.Xml.Linq;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.VisualBasic.FileIO;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.Data.Common;
 
 namespace ExamSeatingSystem
 {
@@ -23,7 +26,7 @@ namespace ExamSeatingSystem
             InitializeComponent();
         }
 
-        private readonly string connectionString = "Data Source=31D-LAB3-41\\MSSQLSERVER01;Initial Catalog=ExamCell;Integrated Security=True";
+        private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
 
         private void AddClassRoom_Click(object sender, EventArgs e)
         {
@@ -229,6 +232,7 @@ namespace ExamSeatingSystem
 
         string programByRoomsBenchName;
         string programBySeatNumber;
+        Boolean stop = false;
         private void assign_Click(object sender, EventArgs e)
         {
             List<long> studentsList = null;
@@ -250,11 +254,11 @@ namespace ExamSeatingSystem
                             course = (string)row.Cells[3].Value;
                             studentsList = GetStudentsFromDB(program, semester, course);
                         }
-                        GenerateBlock(roomNumber, program, course);
+                        GenerateBlockNumber(roomNumber, program, course);
                     }
                 }
             }
-            List<string> benchesList = GetBenchFromDB(roomNumber);
+            List<string> benchesList = GetBenchesFromDB(roomNumber);
             Dictionary<string, long> studentOnBench = new Dictionary<string, long>();
             int loopIteration = studentsList.Count < benchesList.Count ? studentsList.Count : benchesList.Count;
             for (int i = 0; i < loopIteration; i++)
@@ -263,12 +267,23 @@ namespace ExamSeatingSystem
                 {
                     GetProgramBySeatNumber(studentsList[i]);
                     GetProgramByRoomsBenchName(roomNumber, benchesList[i]);
+                    if (stop)
+                    {
+                        break;
+                    }
                     if (programByRoomsBenchName == programBySeatNumber)
                     {
                         studentsList.Remove(i);
                     }
+                    else
+                    {
+                        studentOnBench.Add(benchesList[i], studentsList[i]);
+                    }
                 }
-                studentOnBench.Add(benchesList[i], studentsList[i]);
+                else
+                {
+                    studentOnBench.Add(benchesList[i], studentsList[i]);
+                }
             }
 
             try
@@ -288,18 +303,24 @@ namespace ExamSeatingSystem
             GetClassroomData();
         }
 
-        private void GetProgramByRoomsBenchName(string roomNumber, string blockNumber)
+        private void GetProgramByRoomsBenchName(string roomNumber, string benchName)
         {
+            benchName = benchName.Replace('B', 'A');
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                string selectQuery = "SELECT phc.program_name FROM StudentSeatInClassroom ssc JOIN StudentEnrollsProgramInYear sep ON ssc.roll_number = sep.roll_number JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID WHERE ssc.room_number = @RoomNumber AND ssc.block_number = @BlockNumber;";
+                string selectQuery = "SELECT phc.program_name FROM StudentSeatInClassroom ssc JOIN StudentEnrollsProgramInYear sep ON ssc.roll_number = sep.roll_number JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID WHERE ssc.room_number = @RoomNumber AND ssc.bench_Name = @BenchName;";
                 using (SqlCommand cmd = new SqlCommand(selectQuery, con))
                 {
                     cmd.Parameters.AddWithValue("@RoomNumber", roomNumber);
-                    cmd.Parameters.AddWithValue("@BlockNumber", blockNumber);
+                    cmd.Parameters.AddWithValue("@BenchName", benchName);
+                    stop = false;
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
+                        if (!reader.HasRows)
+                        {
+                            stop = true;
+                        }
                         while (reader.Read())
                         {
                             programByRoomsBenchName = reader.GetString(0);
@@ -332,7 +353,7 @@ namespace ExamSeatingSystem
         List<string> roomNumberList = new List<string>();
         List<string> programNameList = new List<string>();
         List<string> courseNameList = new List<string>();
-        private void GenerateBlock(string roomNumber, string program, string course)
+        private void GenerateBlockNumber(string roomNumber, string program, string course)
         {
             roomNumberList.Add(roomNumber);
             programNameList.Add(program);
@@ -370,7 +391,7 @@ namespace ExamSeatingSystem
             return studentsList;
         }
 
-        private List<string> GetBenchFromDB(string roomNumber)
+        private List<string> GetBenchesFromDB(string roomNumber)
         {
             List<string> benchesList = new List<string>();
 
@@ -431,7 +452,8 @@ namespace ExamSeatingSystem
 
         private void insertCSVtoDB_Click(object sender, EventArgs e)
         {
-            InsertProgrammeSemCourseData(@"C:\Users\admin\Downloads\New Text Document.csv");
+            InsertProgrammeSemCourseData(@"C:\Users\tarun\Downloads\New Text Document.csv");
+            //InsertProgrammeSemCourseData(@"C:\Users\admin\Downloads\New Text Document.csv");
             MessageBox.Show("Successfully Inserted Data");
         }
 
@@ -558,95 +580,101 @@ namespace ExamSeatingSystem
             }
         }
 
-        private void done_Click(object sender, EventArgs e)
+        Dictionary<string, Dictionary<string, List<KeyValuePair<string, long>>>> classroomCopy = new Dictionary<string, Dictionary<string, List<KeyValuePair<string, long>>>>();
+        Dictionary<string, List<KeyValuePair<string, long>>> blockNumberDict = new Dictionary<string, List<KeyValuePair<string, long>>>();
+        List<KeyValuePair<string, long>> benchStudentPairs = new List<KeyValuePair<string, long>>();
+        private void WillGiveLater()
         {
-
-            Boolean first = true;
-            private void PrintDataIntoPDF()
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
-                FileMode fm;
-                if (first)
+                con.Open();
+                string query = "SELECT sic.roll_number, sic.room_number, sic.bench_name, sic.block_number, phc.program_name FROM StudentSeatInClassroom sic INNER JOIN StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number INNER JOIN ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID order by room_number;";
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    fm = FileMode.Create;
-                    first = false;
-                }
-                else
-                {
-                    fm = FileMode.Append;
-                }
-                using (FileStream fs = new FileStream("C://Tarun_java//seating.pdf", fm))
-                {
-                    Document document = new Document();
-                    PdfWriter.GetInstance(document, fs);
-                    document.Open();
-                    foreach (var classroom in classrooms)
+                    using (SqlDataReader re = cmd.ExecuteReader())
                     {
-                        document.Add(new Paragraph("Room No: " + classroom.Key));
-                        //Console.WriteLine(classroom.Value.Count * 2); // Print size of classroom so mul by 2
-
-                        // Calculate & print starting and last roll number for each unique course
-                        Dictionary<string, long> startingRollNumbers = new Dictionary<string, long>();
-                        Dictionary<string, long> lastRollNumbers = new Dictionary<string, long>();
-                        foreach (var bench in classroom.Value)
+                        while (re.Read())
                         {
-                            foreach (var student in bench)
+                            long rollNumber = re.GetInt64(0);
+                            string roomNumber = re.GetString(1);
+                            string benchName = re.GetString(2);
+                            string blockNumber = re.GetString(re.GetOrdinal("block_number"));
+                            string programName = re.GetString(re.GetOrdinal("program_name"));
+                            MessageBox.Show($"{rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
+                            if (classroomCopy.ContainsKey(roomNumber))
                             {
-                                string subject = student.Item2;
-                                long rollNumber = student.Item1;
-
-                                if (!startingRollNumbers.ContainsKey(subject))
+                                if (blockNumberDict.ContainsKey(blockNumber))
                                 {
-                                    startingRollNumbers.Add(subject, rollNumber);
+                                    MessageBox.Show($"1: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
+                                    benchStudentPairs.Add(new KeyValuePair<string, long>(benchName, rollNumber));
+                                    blockNumberDict.Add(blockNumber, benchStudentPairs);
+                                    classroomCopy.Add(roomNumber, blockNumberDict);
                                 }
                                 else
                                 {
-                                    startingRollNumbers[subject] = Math.Min(startingRollNumbers[subject], rollNumber);
-                                }
-
-                                // Update last roll number for each subject
-                                if (!lastRollNumbers.ContainsKey(subject))
-                                {
-                                    lastRollNumbers.Add(subject, rollNumber);
-                                }
-                                else
-                                {
-                                    lastRollNumbers[subject] = Math.Max(lastRollNumbers[subject], rollNumber);
+                                    benchStudentPairs.Clear();
+                                    MessageBox.Show($"2: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
+                                    benchStudentPairs.Add(new KeyValuePair<string, long>(benchName, rollNumber));
+                                    MessageBox.Show($"3: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
+                                    blockNumberDict.Add(blockNumber, benchStudentPairs);
                                 }
                             }
-                        }
-                        /*foreach(var block in blockNumber)
-                        {
-                            foreach (var entry in startingRollNumbers)
+                            else
                             {
-                                MessageBox.Show(block+ "" + entry.Key + classroom.Key);
-                                if (block == entry.Key + classroom.Key)
-                                {
-                                    document.Add(new Paragraph($"Block: {block},Subject: {entry.Key}, Starting Roll Number: {entry.Value}, Last Roll Number: {lastRollNumbers[entry.Key]}"));
-                                    break;
-                                }
+                                benchStudentPairs.Clear();
+                                blockNumberDict.Clear();
+                                MessageBox.Show($"4: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
+                                benchStudentPairs.Add(new KeyValuePair<string, long>(benchName, rollNumber));
+                                MessageBox.Show($"5: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
+                                blockNumberDict.Add(blockNumber, benchStudentPairs);
+                                MessageBox.Show($"6: {rollNumber} {roomNumber} {benchName} {blockNumber} {programName}");
+                                classroomCopy.Add(roomNumber, blockNumberDict);
                             }
-                        }*/
-                        foreach (var entry in startingRollNumbers)
-                        {
-                            document.Add(new Paragraph($"Block: ,Subject: {entry.Key}, Starting Roll Number: {entry.Value}, Last Roll Number: {lastRollNumbers[entry.Key]}"));
-                        }
 
-                        // Print students assigned to each bench
-                        foreach (var bench in classroom.Value)
-                        {
-                            document.Add(new Paragraph("Bench:"));
-                            foreach (var student in bench)
-                            {
-                                document.Add(new Paragraph($"  {student.Item1}: {student.Item2}"));
-                            }
                         }
-                        document.Add(new Paragraph());
                     }
-                    //I will close document when user click finished
-                    document.Close();
+
                 }
             }
-
+            /*foreach(var classroom in classroomCopy)
+            {
+                MessageBox.Show("Room" + classroom.Key);
+                foreach (var block in classroom.Value)
+                {
+                    MessageBox.Show("Block" + block.Key);
+                    foreach (var studentBenchPair in  block.Value)
+                    {
+                        MessageBox.Show(studentBenchPair.Key + " " + studentBenchPair.Value.ToString());
+                    }
+                }
+            }*/
+        }
+        Boolean first = true;
+        private void PrintDataIntoPDF()
+        {
+            FileMode fm;
+            if (first)
+            {
+                fm = FileMode.Create;
+                first = false;
+            }
+            else
+            {
+                fm = FileMode.Append;
+            }
+            /*using (FileStream fs = new FileStream("C://Tarun_java//seating.pdf", fm))
+            {
+                Document document = new Document();
+                PdfWriter.GetInstance(document, fs);
+                document.Open();
+                
+                document.Close();
+            }*/
+        }
+        private void done_Click(object sender, EventArgs e)
+        {
+            WillGiveLater();
+            PrintDataIntoPDF();
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
