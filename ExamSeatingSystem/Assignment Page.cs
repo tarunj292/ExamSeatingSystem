@@ -658,7 +658,7 @@ namespace ExamSeatingSystem
                     // Create a new page for each room
                     document.NewPage();
 
-                    // Create a table with 5 columns
+                    // Create a table with 4 columns
                     PdfPTable table = new PdfPTable(4);
 
                     // Add column headers
