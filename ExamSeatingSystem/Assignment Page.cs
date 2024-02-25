@@ -17,9 +17,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Data.Common;
 using System.Collections;
-using Org.BouncyCastle.Crypto;
-using System.Runtime.ExceptionServices;
-using System.Text.RegularExpressions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace ExamSeatingSystem
 {
@@ -607,6 +605,7 @@ INNER JOIN
 ORDER BY
     sic.room_number,
     sic.block_number,
+    
     TRY_CONVERT(int, SUBSTRING(sic.bench_name, 2, LEN(sic.bench_name))) ASC, -- Sort bench names numerically
     sic.roll_number;";
 
