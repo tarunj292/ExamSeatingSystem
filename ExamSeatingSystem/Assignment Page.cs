@@ -666,7 +666,7 @@ namespace ExamSeatingSystem
                     table.AddCell("Seat no.");
                     table.AddCell("Sr. No.");
                     table.AddCell("Seat no.");
-                    int serial = 0;
+                    int serial = 1;
                     foreach (Dictionary<string, object> row in dataList)
                     {
                         // Add data to the table if it belongs to the current room
@@ -679,7 +679,7 @@ namespace ExamSeatingSystem
                                 headingProgramName.Alignment = Element.ALIGN_CENTER;
                                 document.Add(headingProgramName);
                             }
-                            table.AddCell(serial++.ToString());
+                            table.AddCell(serial.ToString());
                             table.AddCell(row["roll_number"].ToString());
                             table.AddCell(serial++.ToString());
                             table.AddCell("               ");
@@ -722,7 +722,7 @@ namespace ExamSeatingSystem
                     table.AddCell("Sr. No.");
                     table.AddCell("Seat no.");
                     table.AddCell("Signature");
-                    int serial = 0;
+                    int serial = 1;
                     foreach (Dictionary<string, object> row in dataList)
                     {
                         // Add data to the table if it belongs to the current room
