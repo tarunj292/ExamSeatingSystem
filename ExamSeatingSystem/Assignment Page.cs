@@ -18,6 +18,7 @@ using iTextSharp.text.pdf;
 using System.Data.Common;
 using System.Collections;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
+using iTextSharp.text.pdf.qrcode;
 
 namespace ExamSeatingSystem
 {
@@ -768,19 +769,15 @@ ORDER BY
 
         private void PrintAbsentPDF(HashSet<string> roomNumber, ArrayList dataList)
         {
-
             FileMode fm = FileMode.Create;
             string filename = "absent.pdf";
-
-            // Provide the full file path
             string filePath = Path.Combine("C://Tarun_java//", filename);
+
             using (FileStream fs = new FileStream(filePath, fm))
             {
                 Document document = new Document();
-                PdfWriter.GetInstance(document, fs);
+                PdfWriter writer = PdfWriter.GetInstance(document, fs);
                 document.Open();
-
-
 
                 foreach (string room in roomNumber)
                 {
@@ -795,10 +792,8 @@ ORDER BY
                     spacing.SpacingAfter = 2f; // Adjust spacing as needed
                     document.Add(spacing);
 
-
-                    // Create a table with 3 columns
+                    // Create a table with 4 columns
                     PdfPTable table = new PdfPTable(4);
-
                     float tableWidthPercentage = 110f;
                     table.WidthPercentage = tableWidthPercentage;
 
@@ -807,12 +802,11 @@ ORDER BY
 
                     // Calculate the width of each column based on the available width and the specified percentage
                     float[] columnWidths = new float[] {
-                availableWidth * 0.1f, // Sr No 15% of the available width for each column
-                availableWidth * 0.4f, // Seat number 15% of the available width for each column
-                availableWidth * 0.1f, // Sr number 21% of the available width for each column
-                availableWidth * 0.4f, // Seat number 17% of the available width for each column
+                availableWidth * 0.1f, // Sr No 10% of the available width for each column
+                availableWidth * 0.4f, // Seat number 40% of the available width for each column
+                availableWidth * 0.1f, // Sr number 10% of the available width for each column
+                availableWidth * 0.4f, // Seat number 40% of the available width for each column
             };
-
                     table.SetWidths(columnWidths);
 
                     // Add column headers
@@ -836,8 +830,6 @@ ORDER BY
                                 Paragraph headingProgramName = new Paragraph("ProgramName: " + row["program_name"]);
                                 headingProgramName.Alignment = Element.ALIGN_CENTER;
                                 document.Add(headingProgramName);
-
-
                                 spacing.SpacingAfter = 5f; // Adjust spacing as needed
                                 document.Add(spacing);
                             }
@@ -850,11 +842,96 @@ ORDER BY
 
                     // Add the table to the document
                     document.Add(table);
+                    PdfPTable additionalTable = CreateAdditionalTable();
+                    document.Add(additionalTable);
                 }
-
                 document.Close();
             }
         }
+
+
+        /* private PdfPTable CreateAdditionalTable()
+         {
+             // Create a table with 3 columns and 3 rows
+             PdfPTable additionalTable = new PdfPTable(3);
+             additionalTable.WidthPercentage = 100; // Set table width to 100% of available width
+             additionalTable.DefaultCell.Border = PdfPCell.NO_BORDER; // Remove default cell border
+
+             // Add column titles with placeholders for customization
+             PdfPCell titleCell1 = new PdfPCell(new Phrase("    "));
+             titleCell1.HorizontalAlignment = Element.ALIGN_CENTER;
+             titleCell1.BackgroundColor = BaseColor.LIGHT_GRAY; // Set background color for title cell
+             titleCell1.Border = PdfPCell.BOTTOM_BORDER; // Add bottom border to the title cell
+             additionalTable.AddCell(titleCell1);
+
+             PdfPCell titleCell2 = new PdfPCell(new Phrase("Junior Supervisor"));
+             titleCell2.HorizontalAlignment = Element.ALIGN_CENTER;
+             titleCell2.BackgroundColor = BaseColor.LIGHT_GRAY; // Set background color for title cell
+             titleCell2.Border = PdfPCell.BOTTOM_BORDER; // Add bottom border to the title cell
+             additionalTable.AddCell(titleCell2);
+
+             PdfPCell titleCell3 = new PdfPCell(new Phrase("Senior Supervisor"));
+             titleCell3.HorizontalAlignment = Element.ALIGN_CENTER;
+             titleCell3.BackgroundColor = BaseColor.LIGHT_GRAY; // Set background color for title cell
+             titleCell3.Border = PdfPCell.BOTTOM_BORDER; // Add bottom border to the title cell
+             additionalTable.AddCell(titleCell3);
+
+
+                 PdfPCell cell1 = new PdfPCell(new Phrase("Name")); // Placeholder for customization
+                 cell1.Border = PdfPCell.NO_BORDER; // Remove border for data cells
+                 additionalTable.AddCell(cell1);
+
+                 PdfPCell cell2 = new PdfPCell(new Phrase("Signature")); // Placeholder for customization
+                 cell2.Border = PdfPCell.NO_BORDER; // Remove border for data cells
+                 additionalTable.AddCell(cell2);
+
+                 PdfPCell cell3 = new PdfPCell(new Phrase("Date")); // Placeholder for customization
+                 cell3.Border = PdfPCell.NO_BORDER; // Remove border for data cells
+                 additionalTable.AddCell(cell3);
+
+
+             return additionalTable;
+         }*/
+
+
+        private PdfPTable CreateAdditionalTable()
+        {
+            // Create a table with 3 columns and 3 rows
+            PdfPTable additionalTable = new PdfPTable(3);
+            additionalTable.WidthPercentage = 100; // Set table width to 100% of available width
+            additionalTable.DefaultCell.Border = PdfPCell.NO_BORDER; // Remove default cell border
+
+            // Add column titles
+            PdfPCell titleCell = new PdfPCell(new Phrase(" "));
+            titleCell.HorizontalAlignment = Element.ALIGN_CENTER;
+            titleCell.BackgroundColor = BaseColor.LIGHT_GRAY; // Set background color for title cell
+            titleCell.Border = PdfPCell.BOTTOM_BORDER; // Add bottom border to the title cell
+            additionalTable.AddCell(titleCell);
+            additionalTable.AddCell(new PdfPCell(new Phrase("Junior")) { BackgroundColor = BaseColor.LIGHT_GRAY, Border = PdfPCell.BOTTOM_BORDER });
+            additionalTable.AddCell(new PdfPCell(new Phrase("Senior")) { BackgroundColor = BaseColor.LIGHT_GRAY, Border = PdfPCell.BOTTOM_BORDER });
+
+            // Add rows with empty cells
+            additionalTable.AddCell(new PdfPCell(new Phrase("Name")) { Border = PdfPCell.NO_BORDER }); // Row: Name
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+
+            additionalTable.AddCell(new PdfPCell(new Phrase("Signature")) { Border = PdfPCell.NO_BORDER }); // Row: Signature
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+
+            additionalTable.AddCell(new PdfPCell(new Phrase("Date")) { Border = PdfPCell.NO_BORDER }); // Row: Date
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+
+            return additionalTable;
+        }
+
+
+
+
+
+
+
 
         private void PrintAttendancePDF(HashSet<string> roomNumber, ArrayList dataList)
         {
