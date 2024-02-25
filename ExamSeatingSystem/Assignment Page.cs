@@ -17,6 +17,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Data.Common;
 using System.Collections;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace ExamSeatingSystem
 {
@@ -603,8 +604,8 @@ namespace ExamSeatingSystem
             ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID
         ORDER BY
             sic.room_number,
-            sic.block_number;";
-
+            sic.block_number;
+            TRY_CONVERT(int, SUBSTRING(sic.bench_name, 2, LEN(sic.bench_name))) ASC, --Sort bench names numerically;";
                 using (SqlCommand cmd = new SqlCommand(selectQuery, con))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
