@@ -631,6 +631,128 @@ namespace ExamSeatingSystem
             PrintClassroomPDF(roomNumber, dataList);
             PrintAttendancePDF(roomNumber, dataList);
             PrintAbsentPDF(roomNumber, dataList);
+            PrintNoticePDF();
+        }
+
+        private void PrintNoticePDF()
+        {
+            Boolean first = true;
+            FileMode fm;
+            if (first)
+            {
+                fm = FileMode.Create;
+                first = false;
+            }
+            else
+            {
+                fm = FileMode.Append;
+            }
+
+            string filename = "notice.pdf";
+            string filePath = Path.Combine("C://Tarun_java//", filename);
+
+            try
+            {
+                using (FileStream fs = new FileStream(filePath, fm))
+                {
+                    Document document = new Document();
+                    PdfWriter.GetInstance(document, fs);
+                    document.Open();
+
+                    // document.NewPage();
+                    Paragraph heading = new Paragraph("Seating Arrangement");
+                    heading.Alignment = Element.ALIGN_CENTER;
+                    document.Add(heading);
+
+                    Paragraph spacing = new Paragraph("\n");
+                    spacing.SpacingAfter = 10f; // Adjust spacing as needed
+                    document.Add(spacing);
+
+
+                    // Set the width percentage of the table
+                    float tableWidthPercentage = 110f;
+                    PdfPTable table = new PdfPTable(6);
+                    table.WidthPercentage = tableWidthPercentage;
+
+                    // Calculate the available width based on the page size and margins
+                    float availableWidth = document.PageSize.Width - (document.LeftMargin + document.RightMargin);
+
+                    // Calculate the width of each column based on the available width and the specified percentage
+                    float[] columnWidths = new float[] {
+                availableWidth * 0.08f, // Room number 15% of the available width for each column
+                availableWidth * 0.08f, // Block number 15% of the available width for each column
+                availableWidth * 0.21f, // Min roll number 21% of the available width for each column
+                availableWidth * 0.19f, // Max roll number 17% of the available width for each column
+                availableWidth * 0.3f,  // Program name 30% of the available width for each column
+                availableWidth * 0.09f   // Total count 10% of the available width for each column
+            };
+
+                    table.SetWidths(columnWidths);
+
+                    // Add column headers
+                    table.AddCell("Room");
+                    table.AddCell("Block");
+                    table.AddCell("FromSeatNumber");
+                    table.AddCell("ToSeatNumber");
+                    table.AddCell("Program");
+                    table.AddCell("Total");
+
+                    string query = @"
+        SELECT 
+            s.room_number,
+            s.block_number,
+            p.program_name,
+            MIN(e.roll_number) AS min_roll_number,
+            MAX(e.roll_number) AS max_roll_number,
+            COUNT(e.roll_number) AS roll_number_count
+        FROM 
+            StudentSeatInClassroom s
+        INNER JOIN 
+            StudentEnrollsProgramInYear e ON s.roll_number = e.roll_number
+        INNER JOIN 
+            ProgramHasCourse pc ON e.ProgCour_ID = pc.ProgCour_ID
+        INNER JOIN 
+            Program p ON pc.program_name = p.program_name
+        GROUP BY 
+            s.room_number,
+            s.block_number,
+            p.program_name";
+
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    table.AddCell(reader["room_number"].ToString());
+                                    table.AddCell(reader["block_number"].ToString());
+                                    table.AddCell(reader["min_roll_number"].ToString());
+                                    table.AddCell(reader["max_roll_number"].ToString());
+
+
+                                    table.AddCell(reader["program_name"].ToString());
+
+                                    table.AddCell(reader["roll_number_count"].ToString());
+                                }
+                            }
+                        }
+                    }
+
+                    // Add the table to the document
+                    document.Add(table);
+
+                    document.Close();
+                }
+
+                MessageBox.Show("PDF created successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void PrintAbsentPDF(HashSet<string> roomNumber, ArrayList dataList)
