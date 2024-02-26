@@ -28,7 +28,7 @@ namespace ExamSeatingSystem
             InitializeComponent();
         }
 
-        private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+        private readonly string connectionString = "Data Source=31D-LAB3-45;Initial Catalog=ExamCell;Integrated Security=True";
 
         private void AddClassRoom_Click(object sender, EventArgs e)
         {
