@@ -34,6 +34,29 @@ namespace ExamSeatingSystem
         {
             AddRoom();
             GetClassroomData();
+            roomFilter.DataSource = GetRooms();
+            roomFilter.DisplayMember = "room_number";
+            roomFilter.Text = null;
+        }
+
+        private DataTable GetRooms()
+        {
+            string query = "SELECT distinct room_number FROM classroom where isEmpty = 1";
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+
+            return dataTable;
         }
 
         private void AddRoom()
@@ -116,10 +139,14 @@ namespace ExamSeatingSystem
             label3.ForeColor = Color.Gray;
 
 
-
             courseFilter.Enabled = false;
             courseFilter.Text = null;
             label4.ForeColor = Color.Gray;
+
+            roomFilter.DataSource = GetRooms();
+            roomFilter.DisplayMember = "room_number";
+            roomFilter.Text = null;
+
             CountStudentsByDetails();
             GetClassroomData();
         }
@@ -176,7 +203,28 @@ namespace ExamSeatingSystem
                 MessageBox.Show("Entered value already exists");
             }
             CountStudentsByDetails();
+            textBox4.DataSource = GetSerial();
+            textBox4.DisplayMember = "serial_number";
+            textBox4.Text = null;
         }
+
+        private DataTable GetSerial()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("serial_number", typeof(string));
+            //dt.Rows.Add("1");
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (!row.IsNewRow)
+                {
+                    string serial = (Convert.ToInt32(row.Cells[0].Value)).ToString();
+                    dt.Rows.Add(serial);
+                }
+            }
+            return dt;
+        }
+
 
         private void CountStudentsByDetails()
         {
@@ -238,7 +286,7 @@ namespace ExamSeatingSystem
         private void assign_Click(object sender, EventArgs e)
         {
             List<long> studentsList = null;
-            string roomNumber = textBox1.Text.ToString();
+            string roomNumber = roomFilter.Text.ToString();
             // Iterate through each row in the DataGridView
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -428,7 +476,7 @@ namespace ExamSeatingSystem
                     string query = "INSERT INTO StudentSeatInClassroom(room_number, roll_number, bench_name, block_number) VALUES (@RoomNumber, @SeatNumber, @BenchName, @BlockNumber);";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        cmd.Parameters.AddWithValue("@RoomNumber", textBox1.Text);
+                        cmd.Parameters.AddWithValue("@RoomNumber", roomFilter.Text);
                         cmd.Parameters.AddWithValue("@SeatNumber", kvp.Value);
                         cmd.Parameters.AddWithValue("@BenchName", kvp.Key);
                         cmd.Parameters.AddWithValue("@BlockNumber", label11.Text);
@@ -444,7 +492,7 @@ namespace ExamSeatingSystem
                     string updateBenchQuery = "UPDATE classroom SET isEmpty = 0 WHERE bench_name = @BenchName AND room_number = @RoomNumber;";
                     using (SqlCommand updateCommand = new SqlCommand(updateBenchQuery, con))
                     {
-                        updateCommand.Parameters.AddWithValue("@RoomNumber", textBox1.Text);
+                        updateCommand.Parameters.AddWithValue("@RoomNumber", roomFilter.Text);
                         updateCommand.Parameters.AddWithValue("@BenchName", kvp.Key);
                         updateCommand.ExecuteNonQuery();
                     }
@@ -1100,6 +1148,36 @@ ORDER BY
                 if (courseFilter.SelectedItem != null)
                 {
                     courseFilter.Text = courseFilter.SelectedItem.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void textBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (roomFilter.SelectedItem != null)
+                {
+                    roomFilter.Text = roomFilter.SelectedItem.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void textBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (textBox4.SelectedItem != null)
+                {
+                    textBox4.Text = textBox4.SelectedItem.ToString();
                 }
             }
             catch (Exception ex)

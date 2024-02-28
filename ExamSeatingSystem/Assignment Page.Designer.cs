@@ -40,8 +40,6 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button3 = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -53,6 +51,8 @@
             this.programFilter = new System.Windows.Forms.ComboBox();
             this.courseFilter = new System.Windows.Forms.ComboBox();
             this.semesterFilter = new System.Windows.Forms.ComboBox();
+            this.roomFilter = new System.Windows.Forms.ComboBox();
+            this.textBox4 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -61,7 +61,7 @@
             // 
             this.button5.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F);
             this.button5.Location = new System.Drawing.Point(21, 662);
-            this.button5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button5.Margin = new System.Windows.Forms.Padding(4);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(304, 28);
             this.button5.TabIndex = 54;
@@ -173,7 +173,7 @@
             // 
             this.button3.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.Location = new System.Drawing.Point(877, 661);
-            this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button3.Margin = new System.Windows.Forms.Padding(4);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(159, 28);
             this.button3.TabIndex = 55;
@@ -190,24 +190,6 @@
             this.label11.Size = new System.Drawing.Size(41, 25);
             this.label11.TabIndex = 51;
             this.label11.Text = "1A";
-            // 
-            // textBox4
-            // 
-            this.textBox4.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.Location = new System.Drawing.Point(1173, 509);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(188, 29);
-            this.textBox4.TabIndex = 50;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(760, 514);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(160, 29);
-            this.textBox1.TabIndex = 48;
             // 
             // label8
             // 
@@ -302,7 +284,7 @@
             this.programFilter.DisplayMember = "program_name";
             this.programFilter.FormattingEnabled = true;
             this.programFilter.Location = new System.Drawing.Point(219, 418);
-            this.programFilter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.programFilter.Margin = new System.Windows.Forms.Padding(4);
             this.programFilter.Name = "programFilter";
             this.programFilter.Size = new System.Drawing.Size(496, 24);
             this.programFilter.TabIndex = 70;
@@ -312,7 +294,7 @@
             // 
             this.courseFilter.FormattingEnabled = true;
             this.courseFilter.Location = new System.Drawing.Point(191, 524);
-            this.courseFilter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.courseFilter.Margin = new System.Windows.Forms.Padding(4);
             this.courseFilter.Name = "courseFilter";
             this.courseFilter.Size = new System.Drawing.Size(160, 24);
             this.courseFilter.TabIndex = 69;
@@ -323,17 +305,41 @@
             this.semesterFilter.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.semesterFilter.FormattingEnabled = true;
             this.semesterFilter.Location = new System.Drawing.Point(199, 466);
-            this.semesterFilter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.semesterFilter.Margin = new System.Windows.Forms.Padding(4);
             this.semesterFilter.Name = "semesterFilter";
             this.semesterFilter.Size = new System.Drawing.Size(160, 28);
             this.semesterFilter.TabIndex = 68;
             this.semesterFilter.SelectedIndexChanged += new System.EventHandler(this.semesterFilter_SelectedIndexChanged);
+            // 
+            // roomFilter
+            // 
+            this.roomFilter.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.roomFilter.FormattingEnabled = true;
+            this.roomFilter.Location = new System.Drawing.Point(762, 509);
+            this.roomFilter.Margin = new System.Windows.Forms.Padding(4);
+            this.roomFilter.Name = "roomFilter";
+            this.roomFilter.Size = new System.Drawing.Size(160, 28);
+            this.roomFilter.TabIndex = 71;
+            this.roomFilter.SelectedIndexChanged += new System.EventHandler(this.textBox1_SelectedIndexChanged);
+            // 
+            // textBox4
+            // 
+            this.textBox4.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox4.FormattingEnabled = true;
+            this.textBox4.Location = new System.Drawing.Point(1156, 512);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(160, 28);
+            this.textBox4.TabIndex = 72;
+            this.textBox4.SelectedIndexChanged += new System.EventHandler(this.textBox4_SelectedIndexChanged);
             // 
             // AssignmentPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1660, 746);
+            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.roomFilter);
             this.Controls.Add(this.programFilter);
             this.Controls.Add(this.courseFilter);
             this.Controls.Add(this.semesterFilter);
@@ -350,8 +356,6 @@
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label11);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -384,8 +388,6 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
@@ -397,6 +399,8 @@
         private System.Windows.Forms.ComboBox programFilter;
         private System.Windows.Forms.ComboBox courseFilter;
         private System.Windows.Forms.ComboBox semesterFilter;
+        private System.Windows.Forms.ComboBox roomFilter;
+        private System.Windows.Forms.ComboBox textBox4;
     }
 }
 
