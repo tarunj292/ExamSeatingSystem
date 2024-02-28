@@ -639,10 +639,13 @@ namespace ExamSeatingSystem
             }
         }
 
+
+        ArrayList dataList = new ArrayList();
+        HashSet<string> roomNumberHashSet = new HashSet<string>();
         private void WillGiveLater2()
         {
-            ArrayList dataList = new ArrayList();
-            HashSet<string> roomNumber = new HashSet<string>();
+            dataList = new ArrayList();
+            roomNumberHashSet = new HashSet<string>();
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
@@ -672,7 +675,7 @@ ORDER BY
                         {
                             // Create a dictionary to store row data
                             Dictionary<string, object> row = new Dictionary<string, object>();
-                            roomNumber.Add(reader.GetString(0));
+                            roomNumberHashSet.Add(reader.GetString(0));
                             // Add each column to the dictionary
                             row["room_number"] = reader.GetString(0);
                             row["block_number"] = reader.GetString(1);
@@ -686,10 +689,8 @@ ORDER BY
                     }
                 }
             }
-            PrintClassroomPDF(roomNumber, dataList);
-            PrintAttendancePDF(roomNumber, dataList);
-            PrintAbsentPDF(roomNumber, dataList);
-            PrintNoticePDF();
+            PrintClassroomPDF();
+            PrintAttendancePDF();
         }
 
         private void PrintNoticePDF()
@@ -811,7 +812,7 @@ ORDER BY
             }
         }
 
-        private void PrintAbsentPDF(HashSet<string> roomNumber, ArrayList dataList)
+        private void PrintAbsentPDF()
         {
 
             FileMode fm = FileMode.Create;
@@ -825,7 +826,7 @@ ORDER BY
                 PdfWriter.GetInstance(document, fs);
                 document.Open();
 
-                foreach (string room in roomNumber)
+                foreach (string room in roomNumberHashSet)
                 {
                     Dictionary<string, int> getProgramForRoom = new Dictionary<string, int>();
                     // Create a new page for each room
@@ -873,7 +874,7 @@ ORDER BY
             }
         }
 
-        private void PrintAttendancePDF(HashSet<string> roomNumber, ArrayList dataList)
+        private void PrintAttendancePDF()
         {
             FileMode fm = FileMode.Create;
             string filename = "attendance.pdf";
@@ -886,7 +887,7 @@ ORDER BY
                 PdfWriter.GetInstance(document, fs);
                 document.Open();
 
-                foreach (string room in roomNumber)
+                foreach (string room in roomNumberHashSet)
                 {
                     Dictionary<string, int> getProgramForRoom = new Dictionary<string, int>();
                     // Create a new page for each room
@@ -927,7 +928,7 @@ ORDER BY
                 document.Close();
             }
         }
-        private void PrintClassroomPDF(HashSet<string> roomNumber, ArrayList dataList)
+        private void PrintClassroomPDF()
         {
             FileMode fm = FileMode.Create;
             string filename = "classroomcopy.pdf";
@@ -940,7 +941,7 @@ ORDER BY
                 PdfWriter.GetInstance(document, fs);
                 document.Open();
 
-                foreach (string room in roomNumber)
+                foreach (string room in roomNumberHashSet)
                 {
                     Dictionary<string, int> getProgramForRoom = new Dictionary<string, int>();
                     // Create a new page for each room
@@ -1192,6 +1193,16 @@ ORDER BY
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            PrintNoticePDF();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            PrintAbsentPDF();
         }
     }
 }

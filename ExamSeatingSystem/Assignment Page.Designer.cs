@@ -67,6 +67,7 @@
             this.button5.TabIndex = 54;
             this.button5.Text = "Seating Arrangement Notice board";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // done
             // 
@@ -179,6 +180,7 @@
             this.button3.TabIndex = 55;
             this.button3.Text = "Absent Report";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label11
             // 
