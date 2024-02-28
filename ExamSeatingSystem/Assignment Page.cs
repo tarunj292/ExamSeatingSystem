@@ -400,7 +400,7 @@ namespace ExamSeatingSystem
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                string query = $"SELECT * FROM classroom WHERE room_number = @RoomNumber AND isEmpty = 1";
+                string query = $"SELECT * FROM classroom WHERE room_number = @RoomNumber AND isEmpty = 1 ORDER BY LEFT(bench_name, 1), TRY_CONVERT(int, SUBSTRING(bench_name, 2, LEN(bench_name))) ASC;";
 
                 using (SqlCommand command = new SqlCommand(query, con))
                 {
@@ -591,21 +591,22 @@ namespace ExamSeatingSystem
                 con.Open();
                 string selectQuery = @"
         SELECT
-            sic.room_number,
-            sic.block_number,
-            sic.bench_name,
-            sic.roll_number,
-            phc.program_name
-        FROM
-            StudentSeatInClassroom sic
-        INNER JOIN
-            StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number
-        INNER JOIN
-            ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID
-        ORDER BY
-            sic.room_number,
-            sic.block_number;
-            TRY_CONVERT(int, SUBSTRING(sic.bench_name, 2, LEN(sic.bench_name))) ASC, --Sort bench names numerically;";
+    sic.room_number,
+    sic.block_number,
+    sic.bench_name,
+    sic.roll_number,
+    phc.program_name
+FROM
+    StudentSeatInClassroom sic
+INNER JOIN
+    StudentEnrollsProgramInYear sep ON sic.roll_number = sep.roll_number
+INNER JOIN
+    ProgramHasCourse phc ON sep.ProgCour_ID = phc.ProgCour_ID
+ORDER BY
+    sic.room_number,
+    sic.block_number,
+    LEFT(bench_name, 1),
+    TRY_CONVERT(int, SUBSTRING(sic.bench_name, 2, LEN(sic.bench_name))) ASC;";
                 using (SqlCommand cmd = new SqlCommand(selectQuery, con))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
