@@ -16,7 +16,7 @@ namespace ExamSeatingSystem
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AssignmentPage());
+            Application.Run(new Login());
         }
     }
 }
