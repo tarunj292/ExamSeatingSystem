@@ -218,8 +218,11 @@ namespace ExamSeatingSystem
             {
                 if (!row.IsNewRow)
                 {
-                    string serial = (Convert.ToInt32(row.Cells[0].Value)).ToString();
-                    dt.Rows.Add(serial);
+                    if (Convert.ToInt32(row.Cells[7].Value)>0)
+                    {
+                        string serial = (Convert.ToInt32(row.Cells[0].Value)).ToString();
+                        dt.Rows.Add(serial);
+                    }
                 }
             }
             return dt;
@@ -351,6 +354,12 @@ namespace ExamSeatingSystem
             }
             CountStudentsByDetails();
             GetClassroomData();
+            roomFilter.DataSource = GetRooms();
+            roomFilter.DisplayMember = "room_number";
+            roomFilter.Text = null;
+            textBox4.DataSource = GetSerial();
+            textBox4.DisplayMember = "serial_number";
+            textBox4.Text = null;
         }
 
         private void GetProgramByRoomsBenchName(string roomNumber, string benchName)
@@ -795,8 +804,6 @@ ORDER BY
 
                     document.Close();
                 }
-
-                MessageBox.Show("PDF created successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -1012,6 +1019,7 @@ ORDER BY
             }
             CountStudentsByDetails();
             GetClassroomData();
+            dataGridView1.DataSource = null;
             MessageBox.Show("Success");
         }
 
