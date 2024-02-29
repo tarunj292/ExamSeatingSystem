@@ -1,7 +1,12 @@
 create database ExamCell;				
 use ExamCell;
 
-
+CREATE TABLE Users (
+	user_name varchar(50),
+	user_pass nvarchar(500),
+	user_email varchar(50) PRIMARY KEY,
+	user_role varchar(10) CHECK (user_role IN ('admin', 'user')) NOT NULL
+);
 -- Creating Student Table				
 CREATE TABLE Student (				
     roll_number BIGINT PRIMARY KEY,			
@@ -67,6 +72,7 @@ CREATE TABLE StudentSeatInClassroom (
     PRIMARY KEY (room_number, roll_number, bench_name)
 );
 
+select * from Users;
 select * from Student
 select * from Program
 select * from Semester
@@ -78,7 +84,7 @@ select * from classroom
 select * from StudentSeatInClassroom
 
 
-
+delete from Users
 delete from Student				
 delete from Program				
 delete from Semester				
