@@ -39,7 +39,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
@@ -70,7 +69,6 @@
             this.panel3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel3.BackColor = System.Drawing.Color.White;
-            this.panel3.Controls.Add(this.linkLabel2);
             this.panel3.Controls.Add(this.pictureBox5);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.label1);
@@ -185,19 +183,6 @@
             this.label4.Size = new System.Drawing.Size(121, 21);
             this.label4.TabIndex = 14;
             this.label4.Text = "UserName *";
-            // 
-            // linkLabel2
-            // 
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Font = new System.Drawing.Font("Mongolian Baiti", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel2.Location = new System.Drawing.Point(905, 614);
-            this.linkLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(227, 21);
-            this.linkLabel2.TabIndex = 19;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "Didn\'t Registered? SignUp";
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
             // pictureBox1
             // 
@@ -378,8 +363,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.IndianRed;
             this.ClientSize = new System.Drawing.Size(1814, 755);
-            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel3);
+            this.Controls.Add(this.panel2);
             this.Name = "Login";
             this.Text = "Login";
             this.panel3.ResumeLayout(false);
@@ -423,6 +408,5 @@
         private System.Windows.Forms.TextBox textBox9;
         private System.Windows.Forms.TextBox textBox10;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.LinkLabel linkLabel2;
     }
 }

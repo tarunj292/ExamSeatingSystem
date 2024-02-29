@@ -54,8 +54,13 @@
             this.roomFilter = new System.Windows.Forms.ComboBox();
             this.textBox4 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.signUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button5
@@ -163,12 +168,12 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 10);
+            this.dataGridView1.Location = new System.Drawing.Point(12, 52);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1025, 319);
+            this.dataGridView1.Size = new System.Drawing.Size(1025, 277);
             this.dataGridView1.TabIndex = 39;
             // 
             // button3
@@ -338,7 +343,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(562, 637);
+            this.button2.Location = new System.Drawing.Point(641, 593);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(95, 23);
             this.button2.TabIndex = 74;
@@ -346,11 +351,55 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.signUpToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1660, 28);
+            this.menuStrip1.TabIndex = 75;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // signUpToolStripMenuItem
+            // 
+            this.signUpToolStripMenuItem.Name = "signUpToolStripMenuItem";
+            this.signUpToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
+            this.signUpToolStripMenuItem.Text = "SignUp";
+            this.signUpToolStripMenuItem.Click += new System.EventHandler(this.signUpToolStripMenuItem_Click);
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F);
+            this.button1.Location = new System.Drawing.Point(343, 661);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(214, 28);
+            this.button1.TabIndex = 76;
+            this.button1.Text = "ClassRoom Copy";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button4
+            // 
+            this.button4.Font = new System.Drawing.Font("Mongolian Baiti", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.Location = new System.Drawing.Point(617, 661);
+            this.button4.Margin = new System.Windows.Forms.Padding(4);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(229, 28);
+            this.button4.TabIndex = 77;
+            this.button4.Text = "Attendance Report";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // AssignmentPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1660, 746);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.roomFilter);
@@ -377,12 +426,15 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.menuStrip1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "AssignmentPage";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.AssignmentPage_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -416,6 +468,10 @@
         private System.Windows.Forms.ComboBox roomFilter;
         private System.Windows.Forms.ComboBox textBox4;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem signUpToolStripMenuItem;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button4;
     }
 }
 

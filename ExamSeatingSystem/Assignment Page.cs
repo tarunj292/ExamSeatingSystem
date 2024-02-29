@@ -26,6 +26,7 @@ namespace ExamSeatingSystem
         public AssignmentPage()
         {
             InitializeComponent();
+            
         }
 
         private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
@@ -360,6 +361,7 @@ namespace ExamSeatingSystem
             textBox4.DataSource = GetSerial();
             textBox4.DisplayMember = "serial_number";
             textBox4.Text = null;
+            WillGiveLater2();
         }
 
         private void GetProgramByRoomsBenchName(string roomNumber, string benchName)
@@ -1202,12 +1204,12 @@ ORDER BY
 
         private void button5_Click(object sender, EventArgs e)
         {
-            //PrintNoticePDF();
+            PrintNoticePDF();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            //PrintAbsentPDF();
+            PrintAbsentPDF();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -1244,6 +1246,23 @@ ORDER BY
             PSCHashSet.Clear();
             dataGridView1.DataSource = null;
             MessageBox.Show("Success");
+        }
+
+        private void signUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Shared.OpenSignUp = true;
+            Login login = new Login();
+            login.Show();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            PrintClassroomPDF();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            PrintAttendancePDF();
         }
     }
 }

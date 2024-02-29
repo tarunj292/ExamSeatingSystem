@@ -18,6 +18,11 @@ namespace ExamSeatingSystem
         public Login()
         {
             InitializeComponent();
+            if (Shared.OpenSignUp)
+            {
+                panel3.Visible = false;
+                panel2.Visible = true;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -62,13 +67,6 @@ namespace ExamSeatingSystem
                 }
             }
         }
-
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            panel2.Visible = true;
-            panel3.Visible = false;
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             string username = textBox10.Text;
@@ -143,4 +141,10 @@ namespace ExamSeatingSystem
             return Regex.IsMatch(emailPattern, email);
         }
     }
+
+    public static class Shared
+    {
+        public static Boolean OpenSignUp = false;
+    }
+
 }
