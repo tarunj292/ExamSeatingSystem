@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -22,6 +23,7 @@ namespace ExamSeatingSystem
         private void button2_Click(object sender, EventArgs e)
         {
             LoginUser();
+
 
         }
 
@@ -74,6 +76,18 @@ namespace ExamSeatingSystem
             string cnfpassword = textBox3.Text;
             string email = textBox9.Text;
 
+            if(!IsValidEmail(email))
+            {
+                MessageBox.Show("Please enter a valid email address.");
+                return;
+            }
+
+            if(password.Length < 8)
+            {
+                MessageBox.Show("Password must be atleast 8 characters long");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(cnfpassword))
             {
                 MessageBox.Show("Please enter username, email, and password.");
@@ -121,6 +135,12 @@ namespace ExamSeatingSystem
                     }
                 }
             }
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            string emailPattern = @"^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$";
+            return Regex.IsMatch(emailPattern, email);
         }
     }
 }

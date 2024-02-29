@@ -39,9 +39,10 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
@@ -54,7 +55,6 @@
             this.label12 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -67,8 +67,10 @@
             // 
             // panel3
             // 
+            this.panel3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel3.BackColor = System.Drawing.Color.White;
+            this.panel3.Controls.Add(this.linkLabel2);
             this.panel3.Controls.Add(this.pictureBox5);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.label1);
@@ -78,7 +80,6 @@
             this.panel3.Controls.Add(this.textBox1);
             this.panel3.Controls.Add(this.textBox2);
             this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.linkLabel2);
             this.panel3.Controls.Add(this.pictureBox1);
             this.panel3.Location = new System.Drawing.Point(260, 2);
             this.panel3.Margin = new System.Windows.Forms.Padding(4);
@@ -89,7 +90,7 @@
             // pictureBox5
             // 
             this.pictureBox5.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox5.Image")));
-            this.pictureBox5.Location = new System.Drawing.Point(1200, 721);
+            this.pictureBox5.Location = new System.Drawing.Point(1200, 686);
             this.pictureBox5.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBox5.Name = "pictureBox5";
             this.pictureBox5.Size = new System.Drawing.Size(91, 62);
@@ -185,17 +186,6 @@
             this.label4.TabIndex = 14;
             this.label4.Text = "UserName *";
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(756, 788);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 20;
-            this.pictureBox1.TabStop = false;
-            // 
             // linkLabel2
             // 
             this.linkLabel2.AutoSize = true;
@@ -208,6 +198,17 @@
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "Didn\'t Registered? SignUp";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(756, 788);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 20;
+            this.pictureBox1.TabStop = false;
             // 
             // panel2
             // 
@@ -233,6 +234,19 @@
             this.panel2.Size = new System.Drawing.Size(1295, 748);
             this.panel2.TabIndex = 28;
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Mongolian Baiti", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button1.Location = new System.Drawing.Point(969, 614);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(116, 44);
+            this.button1.TabIndex = 25;
+            this.button1.Text = "SignUp";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -246,6 +260,7 @@
             // 
             // pictureBox3
             // 
+            this.pictureBox3.Image = global::ExamSeatingSystem.Properties.Resources.somaiya;
             this.pictureBox3.Location = new System.Drawing.Point(0, 0);
             this.pictureBox3.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBox3.Name = "pictureBox3";
@@ -357,26 +372,14 @@
             this.textBox10.Size = new System.Drawing.Size(308, 22);
             this.textBox10.TabIndex = 23;
             // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Mongolian Baiti", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.button1.Location = new System.Drawing.Point(969, 614);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(116, 44);
-            this.button1.TabIndex = 25;
-            this.button1.Text = "SignUp";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.IndianRed;
             this.ClientSize = new System.Drawing.Size(1814, 755);
-            this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel3);
             this.Name = "Login";
             this.Text = "Login";
             this.panel3.ResumeLayout(false);
