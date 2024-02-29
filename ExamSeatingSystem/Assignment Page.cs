@@ -218,7 +218,7 @@ namespace ExamSeatingSystem
             {
                 if (!row.IsNewRow)
                 {
-                    if (Convert.ToInt32(row.Cells[7].Value)>0)
+                    if (Convert.ToInt32(row.Cells[7].Value) > 0)
                     {
                         string serial = (Convert.ToInt32(row.Cells[0].Value)).ToString();
                         dt.Rows.Add(serial);
@@ -689,6 +689,8 @@ ORDER BY
                     }
                 }
             }
+            PrintAbsentPDF();
+            PrintNoticePDF();
             PrintClassroomPDF();
             PrintAttendancePDF();
         }
@@ -868,10 +870,45 @@ ORDER BY
 
                     // Add the table to the document
                     document.Add(table);
+                    PdfPTable additionalTable = CreateAdditionalTable();
+                    document.Add(additionalTable);
                 }
 
                 document.Close();
             }
+        }
+
+        private PdfPTable CreateAdditionalTable()
+        {
+            // Create a table with 3 columns and 3 rows
+            PdfPTable additionalTable = new PdfPTable(3);
+            additionalTable.WidthPercentage = 100; // Set table width to 100% of available width
+            additionalTable.DefaultCell.Border = PdfPCell.NO_BORDER; // Remove default cell border
+
+            // Add column titles
+            PdfPCell titleCell = new PdfPCell(new Phrase(" "));
+            titleCell.HorizontalAlignment = Element.ALIGN_CENTER;
+            titleCell.BackgroundColor = BaseColor.LIGHT_GRAY; // Set background color for title cell
+            titleCell.Border = PdfPCell.BOTTOM_BORDER; // Add bottom border to the title cell
+            additionalTable.AddCell(titleCell);
+            additionalTable.AddCell(new PdfPCell(new Phrase("Junior")) { BackgroundColor = BaseColor.LIGHT_GRAY, Border = PdfPCell.BOTTOM_BORDER });
+            additionalTable.AddCell(new PdfPCell(new Phrase("Senior")) { BackgroundColor = BaseColor.LIGHT_GRAY, Border = PdfPCell.BOTTOM_BORDER });
+
+            // Add rows with empty cells
+            additionalTable.AddCell(new PdfPCell(new Phrase("Name")) { Border = PdfPCell.NO_BORDER }); // Row: Name
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+
+            additionalTable.AddCell(new PdfPCell(new Phrase("Signature")) { Border = PdfPCell.NO_BORDER }); // Row: Signature
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+
+            additionalTable.AddCell(new PdfPCell(new Phrase("Date")) { Border = PdfPCell.NO_BORDER }); // Row: Date
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+            additionalTable.AddCell(new PdfPCell(new Phrase(" "))); // Empty cell
+
+            return additionalTable;
+
         }
 
         private void PrintAttendancePDF()
@@ -990,38 +1027,6 @@ ORDER BY
         private void done_Click(object sender, EventArgs e)
         {
             WillGiveLater2();
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                string updateStudentQuery = "UPDATE Student SET isAssigned = 0;";
-                using (SqlCommand updateCmd = new SqlCommand(updateStudentQuery, con))
-                {
-                    updateCmd.ExecuteNonQuery();
-                }
-
-                string updateBenchQuery = "UPDATE classroom SET isEmpty = 1;";
-                using (SqlCommand updateCommand = new SqlCommand(updateBenchQuery, con))
-                {
-                    updateCommand.ExecuteNonQuery();
-                }
-
-                string deleteSSICQuery = "delete from StudentSeatInClassroom;";
-                using (SqlCommand deleteCommand = new SqlCommand(deleteSSICQuery, con))
-                {
-                    deleteCommand.ExecuteNonQuery();
-                }
-
-                string deleteClassroomQuery = "delete from classroom;";
-                using (SqlCommand deleteCommand = new SqlCommand(deleteClassroomQuery, con))
-                {
-                    deleteCommand.ExecuteNonQuery();
-                }
-
-            }
-            CountStudentsByDetails();
-            GetClassroomData();
-            dataGridView1.DataSource = null;
-            MessageBox.Show("Success");
         }
 
         private void button12_Click(object sender, EventArgs e)
@@ -1197,12 +1202,48 @@ ORDER BY
 
         private void button5_Click(object sender, EventArgs e)
         {
-            PrintNoticePDF();
+            //PrintNoticePDF();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            PrintAbsentPDF();
+            //PrintAbsentPDF();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string updateStudentQuery = "UPDATE Student SET isAssigned = 0;";
+                using (SqlCommand updateCmd = new SqlCommand(updateStudentQuery, con))
+                {
+                    updateCmd.ExecuteNonQuery();
+                }
+
+                string updateBenchQuery = "UPDATE classroom SET isEmpty = 1;";
+                using (SqlCommand updateCommand = new SqlCommand(updateBenchQuery, con))
+                {
+                    updateCommand.ExecuteNonQuery();
+                }
+
+                string deleteSSICQuery = "delete from StudentSeatInClassroom;";
+                using (SqlCommand deleteCommand = new SqlCommand(deleteSSICQuery, con))
+                {
+                    deleteCommand.ExecuteNonQuery();
+                }
+
+                string deleteClassroomQuery = "delete from classroom;";
+                using (SqlCommand deleteCommand = new SqlCommand(deleteClassroomQuery, con))
+                {
+                    deleteCommand.ExecuteNonQuery();
+                }
+            }
+            CountStudentsByDetails();
+            GetClassroomData();
+            PSCHashSet.Clear();
+            dataGridView1.DataSource = null;
+            MessageBox.Show("Success");
         }
     }
 }
