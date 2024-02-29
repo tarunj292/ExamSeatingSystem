@@ -229,7 +229,6 @@ namespace ExamSeatingSystem
             return dt;
         }
 
-
         private void CountStudentsByDetails()
         {
             DataTable combinedDataTable = new DataTable();
@@ -530,9 +529,9 @@ namespace ExamSeatingSystem
 
         private void insertCSVtoDB_Click(object sender, EventArgs e)
         {
-            InsertProgrammeSemCourseData(@"C:\Users\tarun\Downloads\New Text Document.csv");
+            Task.Run(() => InsertProgrammeSemCourseData(@"C:\Users\tarun\Downloads\New Text Document.csv"));
             //InsertProgrammeSemCourseData(@"C:\Users\admin\Downloads\New Text Document.csv");
-            MessageBox.Show("Successfully Inserted Data");
+            //MessageBox.Show("Successfully Inserted Data");
         }
 
         private void InsertProgrammeSemCourseData(string csvFilePath)
@@ -541,7 +540,7 @@ namespace ExamSeatingSystem
             {
                 using (TextFieldParser csvReader = new TextFieldParser(csvFilePath))
                 {
-                    MessageBox.Show("Start");
+                    MessageBox.Show("Started, Please perform only adding room's till I am working");
                     csvReader.SetDelimiters(new string[] { "," });
                     csvReader.HasFieldsEnclosedInQuotes = true;
 
@@ -651,6 +650,7 @@ namespace ExamSeatingSystem
                         }
                     }
                 }
+                MessageBox.Show("Successfully Inserted Data, Now can fetch students data");
             }
             catch (Exception ex)
             {
