@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,11 +18,17 @@ namespace ExamSeatingSystem
         public Login()
         {
             InitializeComponent();
+            if (Shared.OpenSignUp)
+            {
+                panel3.Visible = false;
+                panel2.Visible = true;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             LoginUser();
+
 
         }
 
@@ -60,19 +67,24 @@ namespace ExamSeatingSystem
                 }
             }
         }
-
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            panel2.Visible = true;
-            panel3.Visible = false;
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             string username = textBox10.Text;
             string password = textBox4.Text;
             string cnfpassword = textBox3.Text;
             string email = textBox9.Text;
+
+            if(!IsValidEmail(email))
+            {
+                MessageBox.Show("Please enter a valid email address.");
+                return;
+            }
+
+            if(password.Length < 8)
+            {
+                MessageBox.Show("Password must be atleast 8 characters long");
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(cnfpassword))
             {
@@ -122,5 +134,17 @@ namespace ExamSeatingSystem
                 }
             }
         }
+
+        private bool IsValidEmail(string email)
+        {
+            string emailPattern = @"^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$";
+            return Regex.IsMatch(emailPattern, email);
+        }
     }
+
+    public static class Shared
+    {
+        public static Boolean OpenSignUp = false;
+    }
+
 }
