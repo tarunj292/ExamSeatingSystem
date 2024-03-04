@@ -121,10 +121,10 @@ namespace ExamSeatingSystem
                             textBox9.Clear();
                             textBox3.Clear();
                             textBox4.Clear();
-                            this.Hide();
+                            /*this.Hide();
                             AssignmentPage page = new AssignmentPage();
                             page.Closed += (s, args) => this.Close();
-                            page.ShowDialog();
+                            page.ShowDialog();*/
                         }
                         else
                         {
