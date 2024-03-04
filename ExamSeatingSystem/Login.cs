@@ -105,14 +105,14 @@ namespace ExamSeatingSystem
 
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
+                    connection.Open();
                     string query = "INSERT INTO users (user_name, user_pass, user_email, user_role) VALUES (@Username, @PasswordHash, @Email, @UserRole)";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Username", username);
                         command.Parameters.AddWithValue("@PasswordHash", hashedPassword);
                         command.Parameters.AddWithValue("@Email", email);
-                        command.Parameters.AddWithValue("@UserRole", "admin");
-                        connection.Open();
+                        command.Parameters.AddWithValue("@UserRole", "admin");                       
                         int rowsAffected = command.ExecuteNonQuery();
 
                         if (rowsAffected > 0)
@@ -135,14 +135,16 @@ namespace ExamSeatingSystem
             }
         }
 
-        private bool IsValidEmail(string email)
+        public bool IsValidEmail(string email)
         {
             string emailPattern = @"^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$";
-            return Regex.IsMatch(emailPattern, email);
+            return Regex.IsMatch(email, emailPattern);
         }
-    }
+    
 
-    public static class Shared
+}
+
+public static class Shared
     {
         public static Boolean OpenSignUp = false;
     }
