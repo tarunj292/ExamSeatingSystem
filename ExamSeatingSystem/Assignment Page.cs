@@ -307,7 +307,7 @@ namespace ExamSeatingSystem
                                 int semester = Convert.ToInt32(row.Cells[1].Value);
                                 program = (string)row.Cells[2].Value;
                                 course = (string)row.Cells[3].Value;
-                                studentsList = GetStudentsFromDB(program, semester, course);
+                                studentsList = GetStudentsFromDB(program, semester, course);                                
                             }
                             GenerateBlockNumber(roomNumber, program, course);
                         }
@@ -321,7 +321,7 @@ namespace ExamSeatingSystem
                     MessageBox.Show("No students or benches available for assignment.");
                     return;
                 }
-
+                loopIteration = studentsList.Count < benchesList.Count ? studentsList.Count : benchesList.Count;
                 for (int i = 0; i < loopIteration; i++)
                 {
                     if (benchesList[i][0] == 'B')
@@ -346,13 +346,11 @@ namespace ExamSeatingSystem
                         studentOnBench.Add(benchesList[i], studentsList[i]);
                     }
                 }
-
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
                     AssignStudents(studentOnBench);
-                    MessageBox.Show("Success");
+                    MessageBox.Show("Success yeah");
                 }
             }
             catch (Exception ex)
@@ -409,6 +407,7 @@ namespace ExamSeatingSystem
 
         private void GetProgramBySeatNumber(long seatNumber)
         {
+            MessageBox.Show(seatNumber.ToString());
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
@@ -421,6 +420,7 @@ namespace ExamSeatingSystem
                         while (reader.Read())
                         {
                             programBySeatNumber = reader.GetString(0);
+                            MessageBox.Show(programBySeatNumber);
                         }
                     }
                 }
