@@ -140,11 +140,14 @@ namespace ExamSeatingSystem
             string emailPattern = @"^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$";
             return Regex.IsMatch(email, emailPattern);
         }
-    
 
-}
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
 
-public static class Shared
+        }
+    }
+
+    public static class Shared
     {
         public static Boolean OpenSignUp = false;
     }

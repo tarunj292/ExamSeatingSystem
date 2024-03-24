@@ -350,7 +350,7 @@ namespace ExamSeatingSystem
                 {
                     con.Open();
                     AssignStudents(studentOnBench);
-                    MessageBox.Show("Success yeah");
+                    MessageBox.Show("Success");
                 }
             }
             catch (Exception ex)
@@ -407,7 +407,6 @@ namespace ExamSeatingSystem
 
         private void GetProgramBySeatNumber(long seatNumber)
         {
-            MessageBox.Show(seatNumber.ToString());
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
@@ -420,7 +419,6 @@ namespace ExamSeatingSystem
                         while (reader.Read())
                         {
                             programBySeatNumber = reader.GetString(0);
-                            MessageBox.Show(programBySeatNumber);
                         }
                     }
                 }
