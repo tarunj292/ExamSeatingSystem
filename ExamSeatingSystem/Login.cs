@@ -5,6 +5,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -28,15 +30,13 @@ namespace ExamSeatingSystem
         private void button2_Click(object sender, EventArgs e)
         {
             LoginUser();
-
-
         }
 
         private void LoginUser()
         {
-            string username = textBox2.Text;
+            string useremail = textBox2.Text;
             string password = textBox1.Text;
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(useremail) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("Please enter both username and password.");
                 return;
@@ -45,10 +45,10 @@ namespace ExamSeatingSystem
             {
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    string query = "SELECT user_pass FROM Users WHERE user_name = @Username";
+                    string query = "SELECT user_pass FROM Users WHERE user_email = @Useremail";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Username", username);
+                        command.Parameters.AddWithValue("@Useremail", useremail);
                         connection.Open();
                         string hashedPassword = (string)command.ExecuteScalar();
 
@@ -143,7 +143,55 @@ namespace ExamSeatingSystem
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            panel1.Visible = true;
+            linkLabel1.Visible = false;
+            label2.Text = "               Reset your password";
+        }
 
+        private void SendPasswordResetEmail(string email, string resetToken)
+        {
+            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("tarunj292@gmail.com", "fsgo xwuk slpr gjwr"),
+                EnableSsl = true
+            };
+
+            MailMessage mailMessage = new MailMessage
+            {
+                From = new MailAddress("tarunj292@gmail.com"),
+                Subject = "Password Reset",
+                Body = $"Dear User,\n\nPlease click the following link to reset your password:\n\nhttps://example.com/reset-password?token={resetToken}\n\nThank you."
+            };
+
+            mailMessage.To.Add(email);
+
+            smtpClient.Send(mailMessage);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string email = textBox5.Text;
+            if (!IsValidEmail(email))
+            {
+                MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Generate a random password reset token (for demonstration purposes)
+            string resetToken = Guid.NewGuid().ToString();
+
+            // Send a password reset email to the user
+            SendPasswordResetEmail(email, resetToken);
+            MessageBox.Show("Password reset email has been sent to your email address.", "Email Sent", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            panel1.Visible = false;
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            panel1.Visible = false;
+            linkLabel1.Visible = true;
+            label2.Text = "Please Enter your Username and Password";
         }
     }
 

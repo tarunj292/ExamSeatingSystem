@@ -30,11 +30,17 @@ namespace ExamSeatingSystem
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Login));
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -54,9 +60,8 @@ namespace ExamSeatingSystem
             this.label12 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.panel3.SuspendLayout();
+            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -72,12 +77,12 @@ namespace ExamSeatingSystem
             this.panel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel3.BackColor = System.Drawing.Color.White;
             this.panel3.Controls.Add(this.panel1);
+            this.panel3.Controls.Add(this.button2);
             this.panel3.Controls.Add(this.linkLabel1);
             this.panel3.Controls.Add(this.pictureBox5);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.pictureBox2);
-            this.panel3.Controls.Add(this.button2);
             this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.textBox1);
             this.panel3.Controls.Add(this.textBox2);
@@ -88,6 +93,86 @@ namespace ExamSeatingSystem
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1295, 752);
             this.panel3.TabIndex = 27;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.linkLabel2);
+            this.panel1.Controls.Add(this.label9);
+            this.panel1.Controls.Add(this.textBox5);
+            this.panel1.Controls.Add(this.button3);
+            this.panel1.Location = new System.Drawing.Point(840, 327);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(397, 252);
+            this.panel1.TabIndex = 26;
+            this.panel1.Visible = false;
+            // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Location = new System.Drawing.Point(155, 228);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(58, 16);
+            this.linkLabel2.TabIndex = 27;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Go back";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Mongolian Baiti", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.Color.Black;
+            this.label9.Location = new System.Drawing.Point(27, 37);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(81, 21);
+            this.label9.TabIndex = 27;
+            this.label9.Text = "Email *";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(35, 92);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(340, 22);
+            this.textBox5.TabIndex = 27;
+            // 
+            // button3
+            // 
+            this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button3.Font = new System.Drawing.Font("Mongolian Baiti", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(95, 172);
+            this.button3.Margin = new System.Windows.Forms.Padding(4);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(208, 36);
+            this.button3.TabIndex = 19;
+            this.button3.Text = "Change Password";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button2.Font = new System.Drawing.Font("Mongolian Baiti", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(961, 543);
+            this.button2.Margin = new System.Windows.Forms.Padding(4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(140, 36);
+            this.button2.TabIndex = 18;
+            this.button2.Text = "Login ";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(977, 631);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(118, 16);
+            this.linkLabel1.TabIndex = 25;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Forgot  password?";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // pictureBox5
             // 
@@ -134,19 +219,6 @@ namespace ExamSeatingSystem
             this.pictureBox2.TabIndex = 21;
             this.pictureBox2.TabStop = false;
             // 
-            // button2
-            // 
-            this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.Font = new System.Drawing.Font("Mongolian Baiti", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(961, 543);
-            this.button2.Margin = new System.Windows.Forms.Padding(4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(140, 36);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Login ";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -184,9 +256,9 @@ namespace ExamSeatingSystem
             this.label4.Location = new System.Drawing.Point(853, 331);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(121, 21);
+            this.label4.Size = new System.Drawing.Size(81, 21);
             this.label4.TabIndex = 14;
-            this.label4.Text = "UserName *";
+            this.label4.Text = "Email *";
             // 
             // pictureBox1
             // 
@@ -361,24 +433,6 @@ namespace ExamSeatingSystem
             this.textBox10.Size = new System.Drawing.Size(308, 22);
             this.textBox10.TabIndex = 23;
             // 
-            // linkLabel1
-            // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(977, 631);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(109, 16);
-            this.linkLabel1.TabIndex = 25;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Forgot Password";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
-            // panel1
-            // 
-            this.panel1.Location = new System.Drawing.Point(840, 327);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(397, 280);
-            this.panel1.TabIndex = 26;
-            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -391,6 +445,8 @@ namespace ExamSeatingSystem
             this.Text = "Login";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -432,5 +488,9 @@ namespace ExamSeatingSystem
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.LinkLabel linkLabel2;
     }
 }
