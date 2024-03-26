@@ -14,7 +14,9 @@ namespace ExamSeatingSystem
 {
     public partial class Login : Form
     {
-        private const string ConnectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+        //private const string ConnectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+        private const string ConnectionString = "Data Source=SHORT-FEET\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+
         public Login()
         {
             InitializeComponent();

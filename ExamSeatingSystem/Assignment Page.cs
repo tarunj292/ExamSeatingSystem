@@ -29,7 +29,9 @@ namespace ExamSeatingSystem
 
         }
 
-        private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+        //private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+        private readonly string connectionString = "Data Source=SHORT-FEET\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+
 
         private void AddClassRoom_Click(object sender, EventArgs e)
         {
@@ -525,7 +527,7 @@ namespace ExamSeatingSystem
             }
         }
 
-        private void insertCSVtoDB_Click(object sender, EventArgs e)
+        private void addProgrameDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Task.Run(() => InsertProgrammeSemCourseData(@"C:\Users\tarun\Downloads\New Text Document.csv"));
             //InsertProgrammeSemCourseData(@"C:\Users\admin\Downloads\New Text Document.csv");
