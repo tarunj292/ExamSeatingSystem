@@ -29,7 +29,9 @@ namespace ExamSeatingSystem
 
         }
 
-        private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+        //private readonly string connectionString = "Data Source=TARUNJOSHI\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+        private readonly string connectionString = "Data Source=SHORT-FEET\\SQLEXPRESS;Initial Catalog=ExamCell;Integrated Security=True;";
+
 
         private void AddClassRoom_Click(object sender, EventArgs e)
         {
@@ -307,7 +309,7 @@ namespace ExamSeatingSystem
                                 int semester = Convert.ToInt32(row.Cells[1].Value);
                                 program = (string)row.Cells[2].Value;
                                 course = (string)row.Cells[3].Value;
-                                studentsList = GetStudentsFromDB(program, semester, course);
+                                studentsList = GetStudentsFromDB(program, semester, course);                                
                             }
                             GenerateBlockNumber(roomNumber, program, course);
                         }
@@ -321,7 +323,7 @@ namespace ExamSeatingSystem
                     MessageBox.Show("No students or benches available for assignment.");
                     return;
                 }
-
+                loopIteration = studentsList.Count < benchesList.Count ? studentsList.Count : benchesList.Count;
                 for (int i = 0; i < loopIteration; i++)
                 {
                     if (benchesList[i][0] == 'B')
@@ -346,8 +348,6 @@ namespace ExamSeatingSystem
                         studentOnBench.Add(benchesList[i], studentsList[i]);
                     }
                 }
-
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
@@ -527,7 +527,7 @@ namespace ExamSeatingSystem
             }
         }
 
-        private void insertCSVtoDB_Click(object sender, EventArgs e)
+        private void addProgrameDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Task.Run(() => InsertProgrammeSemCourseData(@"C:\Users\tarun\Downloads\New Text Document.csv"));
             //InsertProgrammeSemCourseData(@"C:\Users\admin\Downloads\New Text Document.csv");
